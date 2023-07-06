@@ -1,1 +1,3 @@
-# drop-next
+npm install
+
+npm run dev
