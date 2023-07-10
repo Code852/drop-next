@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DroppLabs</title>
+    <style>
+      video {
+        display: none;
+      }
+    </style>
+    <meta name="description" content="DroppLabs-Meeting Room" />
+
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <!-- ******** NEW AFRAME-EXTRAS VERSION FOR A-FRAME v1.0.4 ******** -->
+    <!-- <s?cript src="js/progressive-controls.js"></script> -->
+    <script src="https://supereggbert.github.io/aframe-htmlembed-component/dist/build.js"></script>
+    <script src="//cdn.rawgit.com/donmccurdy/aframe-extras/v7.0.0/dist/aframe-extras.min.js"></script>
+    <script src="https://recast-api.donmccurdy.com/aframe-inspector-plugin-recast.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@^4.0.0/dist/aframe-event-set-component.min.js"></script>
+    <!-- <script src="https://unpkg.com/@fern-solutions/aframe-mirror/dist/mirror.umd.min.js"></script> -->
+
+    <!-- <script src="https://rawgit.com/bryik/aframe-bmfont-text-component/master/dist/aframe-bmfont-text-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-simple-sun-sky@^1.2.3/simple-sun-sky.js"></script> -->
+    <script type="module" src="./aframee.js"></script>
+    <link rel="stylesheet" href="css/style.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.5.0/socket.io.slim.js"></script>
+    <script src="/easyrtc/easyrtc.js"></script>
+    <script src="./dist/networked-aframe.min.js"></script>
+    <script>
+      // see issue https://github.com/networked-aframe/networked-aframe/issues/267
+      NAF.schemas.getComponentsOriginal = NAF.schemas.getComponents;
+      NAF.schemas.getComponents = (template) => {
+        if (!NAF.schemas.hasTemplate("#avatar-template")) {
+          NAF.schemas.add({
+            template: "#avatar-template",
+            components: [
+              "position",
+              "rotation",
+              "player-info",
+              "screen-logic",
+
+              {
+                selector: ".head",
+                component: "material",
+                property: "color",
+              },
+            ],
+          });
+        }
+        const components = NAF.schemas.getComponentsOriginal(template);
+        return components;
+      };
+
+      window.ntExample = {
+        randomColor: () => {
+          return (
+            "#" +
+            new THREE.Color(
+              Math.random(),
+              Math.random(),
+              Math.random()
+            ).getHexString()
+          );
+        },
+      };
+
+      AFRAME.registerComponent("player-info", {
+        // notice that color and name are both listed in the schema; NAF will only keep
+        // properties declared in the schema in sync.
+        schema: {
+          name: {
+            type: "string",
+            default: "user-" + Math.round(Math.random() * 10000),
+          },
+          color: {
+            type: "color", // btw: color is just a string under the hood in A-Frame
+            default: window.ntExample.randomColor(),
+          },
+        },
+
+        init: function () {
+          this.head = this.el.querySelector(".head");
+          this.nametag = this.el.querySelector(".nametag");
+
+          this.ownedByLocalUser = this.el.id === "player";
+          if (this.ownedByLocalUser) {
+            // populate the html overlay with the correct name on init
+            this.nametagInput = document.getElementById("username-overlay");
+            this.nametagInput.value = this.data.name;
+
+            //       const myInput = document.getElementById('ourInput')
+            // const form = document.getElementById('form')
+
+            const btn = document.querySelector("#form");
+            const textfield = document.querySelector("#ourInput");
+            const username = document.querySelector("#user-name");
+            const log = document.querySelector("#user-message");
+            const planeValue = document.querySelector("a-text.nametag");
+            console.log(planeValue);
+            const sendbtn = document.getElementById("submit");
+            function scrollChatToBottom() {
+              const chatHistory = document.querySelector(".chat-history");
+              chatHistory.scrollTop = chatHistory.scrollHeight + 11;
+            }
+
+            // HTML elements
+            const chatHistory = document.querySelector(".chat-history");
+
+            // NAF subscription
+            NAF.connection.subscribeToDataChannel(
+              "chat",
+              (senderId, dataType, data, targetId) => {
+                console.log("msg", data, "from", senderId);
+
+                // Create new elements
+                const userNameElement = document.createElement("h5");
+                const messageElement = document.createElement("p");
+                userNameElement.style.textAlign = "end";
+                userNameElement.style.color = "red";
+                messageElement.style.textAlign = "end";
+                const hrElement = document.createElement("hr");
+
+                // Set content and attributes
+                userNameElement.textContent = data.username;
+                messageElement.textContent = data.txt;
+
+                // Append elements to chat-history
+                chatHistory.appendChild(userNameElement);
+                chatHistory.appendChild(messageElement);
+                chatHistory.appendChild(hrElement);
+
+                scrollChatToBottom();
+              }
+            );
+
+            // Event listener
+            btn.addEventListener("submit", (evt) => {
+              evt.preventDefault();
+
+              // Create new elements
+              const userNameElement = document.createElement("h5");
+              const messageElement = document.createElement("p");
+              const hrElement = document.createElement("hr");
+
+              scrollChatToBottom();
+              // Set content and attributes
+              userNameElement.textContent = this.data.name;
+              messageElement.textContent = textfield.value;
+
+              // Append elements to chat-history
+              chatHistory.appendChild(userNameElement);
+              chatHistory.appendChild(messageElement);
+              chatHistory.appendChild(hrElement);
+
+              // Broadcast data
+              NAF.connection.broadcastData("chat", {
+                txt: textfield.value,
+                username: document.getElementById("username-overlay").value,
+              });
+
+              const inputElement = document.getElementById("ourInput");
+              inputElement.value = "";
+            });
+
+            sendbtn.addEventListener("click", (e) => {
+              e.preventDefault();
+
+              // Create new elements
+              const userNameElement = document.createElement("h5");
+              const messageElement = document.createElement("p");
+              const hrElement = document.createElement("hr");
+
+              // Set content and attributes
+              userNameElement.textContent = this.data.name;
+              messageElement.textContent = textfield.value;
+
+              scrollChatToBottom();
+              // Append elements to chat-history
+              chatHistory.appendChild(userNameElement);
+              chatHistory.appendChild(messageElement);
+              chatHistory.appendChild(hrElement);
+
+              // Broadcast data
+              NAF.connection.broadcastData("chat", {
+                txt: textfield.value,
+                username: document.getElementById("username-overlay").value,
+              });
+
+              const inputElement = document.getElementById("ourInput");
+              inputElement.value = "";
+            });
+          }
+        },
+
+        // here as an example, not used in current demo. Could build a user list, expanding on this.
+        listUsers: function () {
+          console.log(
+            "userlist",
+            [...document.querySelectorAll("[player-info]")].map(
+              (el) => el.components["player-info"].data.name
+            )
+          );
+        },
+
+        newRandomColor: function () {
+          this.el.setAttribute(
+            "player-info",
+            "color",
+            window.ntExample.randomColor()
+          );
+        },
+
+        update: function () {
+          if (this.head)
+            this.head.setAttribute("material", "color", this.data.color);
+          if (this.nametag) this.nametag.setAttribute("value", this.data.name);
+        },
+      });
+
+      AFRAME.registerComponent("screen-logic", {
+        init: function () {
+          const el = this.el;
+
+          var checkbox = document.getElementById("share-btn");
+          console.log(checkbox);
+
+          var isChecked = false; // Variable to track checkbox state
+
+          checkbox.addEventListener("click", function () {
+            if (!isChecked) {
+              // First click on the checkbox
+              checkbox.style.background = "white";
+              isChecked = true;
+              el.setAttribute("visible", "true");
+            } else {
+              // Second click on the checkbox
+              checkbox.style.background = "rgba(0,0,0,0.6)";
+              isChecked = false;
+              el.setAttribute("visible", "false");
+            }
+          });
+        },
+      });
+    </script>
+    <script src="https://unpkg.com/aframe-randomizer-components@^3.0.1/dist/aframe-randomizer-components.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component@1.3.2/dist/aframe-environment-component.min.js"></script>
+    <script src="/js/spawn-in-circle.component.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+  </head>
+  <body>
+    <!-- <div id="chatUI">
+      <input type="text">
+      <button id="btn">
+        SEND
+      </button>
+      <div id="messages">
+        
+      </div>
+    </div>
+ -->
+
+    <div class="">
+      <div id="live-chat" class="abc1 abcd8">
+        <header class="clearfix">
+          <a href="#" class="chat-close" id="abcd"
+            ><img id="abcd" src="./assets/img/Caret_Circle_Right.svg" alt=""
+          /></a>
+
+          <img src="./assets/img/logo.png" width="50px" alt="" />
+          <h4>Chat Box</h4>
+
+          <span class="chat-message-counter">3</span>
+        </header>
+
+        <div class="chat" id="abcd1">
+          <div class="chat-history"></div>
+          <!-- end chat-history -->
+
+          <form id="form" action="">
+            <fieldset id="inp">
+              <input
+                id="ourInput"
+                type="text"
+                placeholder="Enter You Text"
+                autofocus
+              />
+              <input type="hidden" />
+              <button id="submit" type="submit">
+                <img src="./assets/img/Send_light.svg" alt="" />
+              </button>
+            </fieldset>
+          </form>
+        </div>
+        <!-- end chat -->
+      </div>
+      <!-- end live-chat -->
+    </div>
+
+    <button
+      id="color-changer"
+      style="z-index: 100; bottom: 24px; left: 24px; position: fixed"
+      onclick="let newColor = window.ntExample.randomColor();
+           document.getElementById('player').setAttribute('player-info', 'color', newColor); 
+           document.querySelector('button').style.backgroundColor = newColor;
+           document.querySelector('button').style.color = newColor;
+  "
+    >
+      ■
+    </button>
+    <div class="display-name">
+      <h3>Display Name</h3>
+      <input
+        id="username-overlay"
+        placeholder="Write Your Name"
+        oninput="document.getElementById('player').setAttribute('player-info', 'name', this.value)
+    
+    "
+      />
+      <div class="btn">Done</div>
+    </div>
+
+    <div class="preloader">
+      <p>Loading Experience...</p>
+      <img
+        src="./assets/videos/dropp_group_3D.gif"
+        loop="false"
+        width="500px"
+        alt=""
+      />
+    </div>
+
+    <div class="intro desktop" id="top_layer">
+      <div class="intro_header">
+        <img src="assets/img/logo.png" alt="" class="logo" />
+        <button type="button" class="intro_close_btn">
+          <img src="assets/img/times.svg" alt="" />
+        </button>
+      </div>
+      <div class="intro_content">
+        <h1 class="intro_title">
+          WELCOME <br />
+          TO VIRTUAL OFFICE
+        </h1>
+        <div>
+          <img
+            src="assets/img/cursor-two-sides.svg"
+            alt=""
+            class="intro_cursor_img"
+          />
+          <p>Drag</p>
+          <img src="assets/img/wasd.svg" alt="" class="intro_wasd_img" />
+          <p>Move</p>
+        </div>
+        <div>
+          <p class="intro_text">
+            Use <b>Keyboard</b> and <b>Mouse</b> to explore
+          </p>
+          <button type="button" class="continue_btn">Continue</button>
+        </div>
+      </div>
+    </div>
+    <!-- <button type="button" class="menu_btn" title="Click to show guides">
+    <img src="assets/img/menu.svg" alt="">
+</button> -->
+    <div class="intro mobile" id="top_layer_mobile">
+      <div class="intro_mobile_wrapper step-1">
+        <section class="intro_mobile_section">
+          <div></div>
+          <div>
+            <img src="assets/img/logo.png" alt="" class="logo" />
+            <h1 class="intro_title">
+              WELCOME <br />
+              TO VIRTUAL OFFICE
+            </h1>
+            <button type="button" class="continue_btn">Continue</button>
+          </div>
+          <div class="intro_slider_bullets">
+            <span class="active"></span>
+            <span></span>
+            <span></span>
+          </div>
+        </section>
+        <section class="intro_mobile_section">
+          <div class="intro_header" style="justify-content: center">
+            <img src="assets/img/logo.png" alt="" class="logo" />
+          </div>
+          <div>
+            <p class="intro_mobile_text">Tap to move forward</p>
+            <img src="assets/img/cursor.svg" alt="" />
+          </div>
+          <div class="intro_slider_bullets">
+            <span></span>
+            <span class="active"></span>
+            <span></span>
+          </div>
+        </section>
+        <section class="intro_mobile_section">
+          <div class="intro_header" style="justify-content: center">
+            <img src="assets/img/logo.png" alt="" class="logo" />
+          </div>
+          <div>
+            <p class="intro_mobile_text">Move your phone to view</p>
+            <img src="assets/img/move.svg" alt="" />
+            <button type="button" class="continue_btn" id="start-btn">
+              Start
+            </button>
+          </div>
+          <div class="intro_slider_bullets">
+            <span></span>
+            <span></span>
+            <span class="active"></span>
+          </div>
+        </section>
+      </div>
+    </div>
+    <p class="guide_completed">You have completed guide</p>
+
+    <a-scene
+      vr-mode-ui="enabled: false"
+      networked-scene="
+    room: basic-multi-streams;
+    debug: true;
+    adapter: easyrtc;
+    audio: true;
+  
+  "
+      loading-screen="dotsColor: red; backgroundColor: black"
+      inspector-plugin-recast
+      cursor="rayOrigin: mouse; fuse: false"
+      raycaster="objects: .clickable"
+      shadow="type: pcfsoft"
+      renderer="
+physicallyCorrectLights : true;
+               maxCanvasWidth: 1920;
+               maxCanvasHeight: 1920;
+                      colorManagement: true;
+              
+                      exposure : 0.5;
+                   "
+    >
+      <a-assets>
+        <!-- Templates -->
+        <!-- Camera Rig / Player -->
+        <template id="rig-template">
+          <a-entity></a-entity>
+        </template>
+
+        <template id="avatar-template">
+          <a-entity
+            scale="3 3 3"
+            class="avatar"
+            networked-audio-source="positional:false"
+            player-info
+          >
+            <a-gltf-model
+              src="#avatarmodel"
+              rotation="0 -180 0"
+              position="0 -0.5 0"
+              scale="1.3 1.3 1.3"
+            ></a-gltf-model>
+            <a-text
+              class="nametag"
+              value="?"
+              rotation="0 180 0"
+              position=".15 0.15 0"
+              side="double"
+              scale=".5 .5 .5"
+            ></a-text>
+            <a-plane
+              screen-logic
+              id="screenshare"
+              color="#FFF"
+              width="1"
+              height="0.5"
+              position="0.7 0 -0.001"
+              material="side: front; color:#FFF; shader: flat"
+              rotation="0 -180 0"
+              networked-video-source="streamName: screen"
+              visible="false"
+            ></a-plane>
+          </a-entity>
+        </template>
+
+        <!-- <template id="screen-template">
+          
+        </template> -->
+
+        <img id="play" src="./assets/videos/play-solid.svg" />
+        <img id="pause" src="./assets/videos/pause-solid.svg" />
+
+        <!-- /Templates -->
+        <!-- Modelss -->
+        <img id="black" src="./assets/videos/black.png" />
+
+        <a-asset-item
+          id="mainModel"
+          src="./assets/model/model.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="elevatorModel"
+          src="./assets/model/elevator.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="elevatorDoor1"
+          src="./assets/model/door.glb"
+        ></a-asset-item>
+        <a-asset-item id="my-nav-lower" src=""></a-asset-item>
+        <a-asset-item
+          id="my-nav-upper"
+          src="/optional Assets/uppernav.glb"
+        ></a-asset-item>
+        <a-asset-item
+          id="avatarmodel"
+          src="./assets/model/avatar.glb"
+        ></a-asset-item>
+
+        <img src="./assets/videos/Group 1.png" id="flootBtn13" alt="" />
+        <img src="./Group 1.png" id="ground-floor" alt="" />
+
+        <!-- Videos -->
+        <video
+          autoplay
+          id="firstVideo"
+          loop
+          muted
+          playsinline
+          src="./assets/videos/LG- Phone.mp4"
+        ></video>
+
+        <video
+          src="./assets/videos/Untitled_2.mp4"
+          loop
+          muted
+          playsinline
+          id="iframe"
+        ></video>
+
+        <video
+          id="video"
+          class="video"
+          src="./assets/videos/intro.mp4"
+          loop
+          muted
+          playsinline
+        ></video>
+
+        <video
+          id="video2"
+          class="video"
+          src="./assets/videos/FIFA World Cup - Phone.mp4"
+          autoplay
+          loop
+          muted
+          playsinline
+        ></video>
+        <video
+          id="video3"
+          class="video"
+          src="./assets/videos/LG- Phone.mp4"
+          autoplay
+          loop
+          muted
+          playsinline
+        ></video>
+        <video
+          id="video4"
+          class="video"
+          src="./assets/videos/Star Trek - Phone.mp4"
+          autoplay
+          loop
+          muted
+          playsinline
+        ></video>
+        <video
+          id="video5"
+          class="video"
+          src="./assets/videos/dropp-nft.mp4"
+          autoplay
+          loop
+          muted
+          playsinline
+        ></video>
+        <video
+          id="video6"
+          class="video"
+          src="./assets/videos/shopatainament.mp4"
+          autoplay
+          loop
+          muted
+          playsinline
+        ></video>
+        <video
+          id="video7"
+          class="video"
+          src="./assets/videos/arvr_background.mp4"
+          autoplay
+          loop
+          muted
+          playsinline
+        ></video>
+        <video
+          id="video8"
+          class="video"
+          src="./assets/videos/third.mp4"
+          autoplay
+          loop
+          muted
+          playsinline
+        ></video>
+        <video
+          id="video9"
+          class="video"
+          src="./assets/videos/atom_gif.mp4"
+          autoplay
+          loop
+          muted
+          playsinline
+        ></video>
+      </a-assets>
+
+      <!-- Camera + Controls -->
+
+      <a-entity
+        id="rig"
+        movement-controls="speed: 0.4; constrainToNavMesh: true"
+        spawn-in-circle="radius:1"
+        networked="template:#rig-template;"
+      >
+        <a-entity
+          id="player"
+          camera="near: 0.099;"
+          position="0 1.6 0"
+          look-controls
+          networked="template:#avatar-template;attachTemplateToLocal:false;"
+          visible="true"
+        >
+        </a-entity>
+      </a-entity>
+
+      <!-- Plane -->
+
+      <!-- 3D Models -->
+
+      <a-gltf-model
+        id="myModel"
+        src="#mainModel"
+        position="0 -1 0"
+        scale="1.5 1.5 1.5"
+      ></a-gltf-model>
+
+      <a-gltf-model
+        id="elevator"
+        src="#elevatorModel"
+        scale="1.5 1.5 1.5"
+      ></a-gltf-model>
+
+      <a-gltf-model
+        id="elevatorDoor"
+        src="#elevatorDoor1"
+        position="0 -1 0"
+        scale="1.5 1.5 1.5"
+      ></a-gltf-model>
+
+      <!-- Nav Mesh -->
+
+      <!-- Nav Mesh -->
+      <!-- <a-entity gltf-model="./assets/model/navmesh (3).gltf"  nav-mesh  position="0 0.6 0"   visible="true"></a-entity> -->
+      <a-entity
+        id="myNav"
+        gltf-model="#my-nav-lower"
+        nav-mesh
+        position="0 0.6 0"
+        visible="false"
+      >
+      </a-entity>
+
+      <!-- Videos -->
+      <a-entity id="vids">
+        <a-video
+          src="#video"
+          width="4.4"
+          height="2"
+          position="-3.37 1.95 9.4"
+          rotation="0 90 0"
+        ></a-video>
+
+        <a-video
+          src="#video3"
+          width="4"
+          height="2"
+          position="17.46065 11.20324 17.83534"
+          scale="0.414 1.561 1.000"
+          rotation="0 -90 0"
+          material=""
+          geometry=""
+        ></a-video>
+
+        <a-video
+          src="#video2"
+          width="4"
+          height="2"
+          position="17.46065 11.20324 20.58025"
+          scale="0.414 1.561 1"
+          rotation="0 -90 0"
+          material=""
+          geometry=""
+        ></a-video>
+        <a-video
+          src="#video8"
+          width="4"
+          height="2"
+          position="17.46065 11.20324 24.69316"
+          scale="0.414 1.561 1"
+          rotation="0 -90 0"
+          material=""
+          geometry=""
+        ></a-video>
+        <a-video
+          src="#video4"
+          width="4"
+          height="2"
+          position="10.73723 11.20324 33.51838"
+          scale="0.33225 1.26637 1"
+          rotation="0 -178.44484050451925 0"
+          material=""
+          geometry=""
+        ></a-video>
+
+        <a-video
+          src="#video9"
+          width="4"
+          height="2"
+          position="1.50506 11.12215 26.57761"
+          scale="0.67277 0.69516 1"
+          rotation="0 90 0"
+          material=""
+          geometry=""
+        ></a-video>
+        <a-video
+          src="#video5"
+          width="4"
+          height="2"
+          position="13.39675 11.3831 45.3558"
+          scale="0.77922 0.83989 1"
+          rotation="0 -179.9998479605043 -0.40508116115749204"
+          material=""
+          geometry=""
+        ></a-video>
+        <a-video
+          src="#video6"
+          width="4"
+          height="2"
+          position="20.08179 11.39215 45.37119"
+          scale="0.77922 0.83989 1"
+          rotation="0 -179.9998479605043 -0.40508116115749204"
+          material=""
+          geometry=""
+        ></a-video>
+        <a-video
+          src="#video7"
+          width="4"
+          height="2"
+          position="25.13389 11.39215 50.11788"
+          scale="0.77922 0.83989 1"
+          rotation="0.005156620156177409 -90.69406234905314 0.0005729577951308233"
+          material=""
+          geometry=""
+        ></a-video>
+
+        <a-video
+          src="#iframe"
+          width="4"
+          height="2"
+          position="1.58554 11.55837 12.98816"
+          scale="0.71231 0.74979 1"
+          rotation="0 180 0"
+          material=""
+          geometry=""
+        ></a-video>
+        <a-image
+          play-pause
+          position="1.58554 9.85837 12.98816"
+          class="clickable"
+          id="videoControls"
+          scale="0.5 0.5 1"
+          rotation="0 180 0"
+          src="#play"
+        ></a-image>
+      </a-entity>
+
+      <!-- Video End -->
+
+      <a-entity id="allTexts">
+        <a-entity position="3.5 1.6 3.3" rotation="0 -90 0" htmlembed>
+          <!-- VIDEOS TEXT -->
+
+          <div class="value3d" id="value3d">
+            <h1>DroppLabs</h1>
+            <div class="text">
+              droppLabs offers unique, comprehensive, and experiential Web3
+              capabilities, providing our clients with full-scale technical,
+              marketing and operations services to develop and grow their
+              communities.
+              <br />
+              droppLabs technology also powers the Total Access NFT platform,
+              which delivers the most utility and entertainment token-based
+              asset platforms, as well as the Web3 Total Access Fellowship which
+              on boards new entrants into the Web3 ecosystem through an
+              immersive educational program.
+            </div>
+            <div class="btn">Request Demo</div>
+          </div>
+        </a-entity>
+
+        <a-entity
+          position="10.7521 11.28762 45.46895"
+          rotation=""
+          htmlembed=""
+          style="
+            display: none;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            overflow: hidden;
+          "
+        >
+          <div class="value3d" id="value3d">
+            <h1>NFT</h1>
+            <div class="text">
+              <p>
+                NFTs not only present creative investment opportunities, but
+                provide real world utility options that have not been tapped
+                yet. droppLabs will bring your NFTs campaigns into the Web3
+                space.
+              </p>
+            </div>
+            <div class="btn">Request Demo</div>
+          </div>
+        </a-entity>
+
+        <a-entity
+          position="22.86283 11.28762 45.46895"
+          rotation=""
+          htmlembed=""
+          style="
+            display: none;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            overflow: hidden;
+          "
+        >
+          <div class="value3d" id="value3d">
+            <h1>Shopatainment</h1>
+            <div class="text">
+              <p>
+                As the hallmark of droppLabs’s Web3 ecosystem, Shopatainment is
+                the engine that empowers us to create and license
+                full-functional, bespoke shoppable video environments for our
+                clients.
+              </p>
+            </div>
+            <div class="btn">Request Demo</div>
+          </div>
+        </a-entity>
+
+        <a-entity
+          position="25.1117 11.28762 52.83197"
+          rotation="0 -90 0"
+          htmlembed=""
+          style="
+            display: none;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            overflow: hidden;
+          "
+        >
+          <div class="value3d" id="value3d">
+            <h1>Alternative Realities</h1>
+            <div class="text">
+              <p>
+                Mixed Reality (MR), Augmented Reality (AR), and Virtual Reality
+                (VR) are enablers of deeper interactions with your audience and
+                your vehicle of interoperability for the new Web3 ecosystem
+              </p>
+            </div>
+            <div class="btn">Request Demo</div>
+          </div>
+        </a-entity>
+      </a-entity>
+
+      <!-- BTN FOR 13TH FLOOR -->
+
+      <a-image
+        click-animation
+        id="floorbtn"
+        event-set__enter="_event: mouseenter; opacity: 0.5"
+        event-set__leave="_event: mouseleave; opacity: 1 "
+        src="#flootBtn13"
+        position="1.17595 1.07728 22.3114"
+        scale="0.6 0.6 0.6"
+        rotation="0 -90 0"
+        class="clickable"
+        material=""
+        geometry=""
+      >
+      </a-image>
+
+      <a-image
+        click-animation2
+        id="groundbtn"
+        event-set__enter="_event: mouseenter; opacity: 0.5"
+        event-set__leave="_event: mouseleave; opacity: 1 "
+        src="#ground-floor"
+        position="1.1386 11.14367 22.31478"
+        scale="0.6 0.6 0.6"
+        rotation="0 -90 0"
+        class="clickable"
+        material=""
+        geometry=""
+      >
+      </a-image>
+
+      <!-- Mirror -->
+
+      <!-- <a-mirror position="1.4544 11.13968 30.64999" scale="4.89 2.37 1" rotation="0 90 0" geometry="" mirror=""></a-mirror>
+<a-mirror position="3.8655 1.0925 27.01252" scale="3.83 2.37 1" rotation="0 180 0" geometry="" mirror=""></a-mirror> -->
+
+      <!-- Lights -->
+
+      <a-entity
+        light="type:ambient; color: #fffffff; intensity: 0.7"
+        position="-1 15 0"
+      ></a-entity>
+
+      <a-entity light="type:ambient;intensity:0.7"></a-entity>
+    </a-scene>
+
+    <div class="abc3">
+      <button id="menu-btn" type="button" class="button menu-btn">
+        <img
+          class=""
+          id="abcd2"
+          src="./assets/img/Caret_Circle_Right.svg"
+          alt=""
+        />
+      </button>
+    </div>
+    <div class="abc6 abcd6">
+      <button id="collapse-btn" type="button">
+        <img
+          class="abcd6"
+          id=""
+          src="./assets/img/Caret_Circle_Right.svg"
+          alt=""
+          width="40px"
+        />
+      </button>
+    </div>
+    <div class="actions abc2 abcd5" id="abcd3">
+      <button id="collapse-btn" type="button" class="" id="abcd2">
+        <img
+          id="abcd2"
+          class="abcd4"
+          src="./assets/img/Caret_Circle_Right.svg"
+          alt=""
+          width="40px"
+        />
+      </button>
+      <button id="mic-btn" type="button" class="button">
+        <img src="./assets/img/mic.svg" alt="" width="30px" />
+      </button>
+      <button id="screen-btn" type="button" class="button">
+        <img src="./assets/img/screen-options.png" alt="" width="30px" />
+      </button>
+      <button id="chat-btn" type="button" class="button chaticon">
+        <img
+          class="abcd7"
+          src="./assets/img/Chat_alt_3_light.svg"
+          alt=""
+          width="30px"
+        />
+      </button>
+      <button id="share-btn" type="button" class="button">
+        <img src="./assets/img/pc-administrator.png" alt="" width="30px" />
+      </button>
+      <!-- <label for="show-screens-checkbox">
+        <input id="show-screens-checkbox" type="checkbox">
+        Show Screens
+      </label> -->
+    </div>
+
+    <script>
+      // Mic status
+      let micEnabled = true;
+      // Mic button element
+      const micBtnEle = document.getElementById("mic-btn");
+
+      console.log("new update, played with versions");
+      // Called by Networked-Aframe when connected to server
+      function onConnect() {
+        console.log("onConnect", new Date());
+
+        // Handle mic button click (Mute and Unmute)
+        micBtnEle.addEventListener("click", function () {
+          NAF.connection.adapter.enableMicrophone(!micEnabled);
+          micEnabled = !micEnabled;
+          micBtnEle.style.backgroundColor = micEnabled
+            ? "white"
+            : "rgba(0, 0, 0, 0.6)";
+        });
+
+        let screenEnabled = false;
+        // Screen share button element
+        const screenPlane = document.getElementById("screen-share");
+        const screenBtnEle = document.getElementById("screen-btn");
+        const screenshare = document.getElementById("share-btn");
+
+        console.log(screenPlane);
+
+        // On mobile remove elements that are resource heavy
+        const isMobile = AFRAME.utils.device.isMobile();
+
+        if (isMobile) {
+          const particles = document.getElementById("particles");
+          particles.parentNode.removeChild(particles);
+        }
+
+        // Called by Networked-Aframe when connected to server
+
+        console.log("onConnect", new Date());
+
+        // Handle screen button click (Off and On)
+
+        screenBtnEle.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+        screenshare.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+
+        screenBtnEle.addEventListener("click", function () {
+          if (screenEnabled) {
+            NAF.connection.adapter.removeLocalMediaStream("screen");
+            screenEnabled = false;
+            screenBtnEle.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+          } else {
+            navigator.mediaDevices.getDisplayMedia().then((stream) => {
+              NAF.connection.adapter.addLocalMediaStream(stream, "screen");
+              screenEnabled = true;
+            });
+          }
+        });
+      }
+    </script>
+    <script src="script.js"></script>
+
+    <script>
+      // Camera status
+
+      // Screen share status
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $(".abcd6").hide();
+        // $('.abcd7').css("background-color","white");
+        $("#abcd").click(function () {
+          $("#abcd1").slideToggle();
+        });
+
+        $("#abcd2").click(function () {
+          $("#abcd3").slideToggle();
+        });
+        $(".abcd4").click(function () {
+          $(".abcd5").hide();
+          $(".abcd6").show();
+        });
+        $(".abcd6").click(function () {
+          $(".abcd5").show();
+          $(".abcd6").hide();
+        });
+
+        $(".abcd7").click(function () {
+          $(".abcd8").slideToggle();
+          // $('.abcd7').css("background-color","green");
+        });
+      });
+
+      const chaticon = document.querySelector(".chaticon");
+      const chat_box = document.getElementById("live-chat");
+
+      console.log(chaticon, chat_box);
+      var isChecked1 = false; // Variable to track checkbox state
+
+      chaticon.addEventListener("click", function () {
+        if (!isChecked1) {
+          // First click on the checkbox
+          chaticon.style.background = "rgba(0,0,0,0.6)";
+          isChecked1 = true;
+          chat_box.style.display = "none";
+        } else {
+          // Second click on the checkbox
+
+          chaticon.style.background = "white";
+          isChecked1 = false;
+          chat_box.style.display = "block";
+        }
+      });
+    </script>
+  </body>
+</html>
