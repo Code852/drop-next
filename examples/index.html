@@ -32,21 +32,21 @@
       // see issue https://github.com/networked-aframe/networked-aframe/issues/267
       NAF.schemas.getComponentsOriginal = NAF.schemas.getComponents;
       NAF.schemas.getComponents = (template) => {
-        if (!NAF.schemas.hasTemplate("#avatar-template")) {
+        if (!NAF.schemas.hasTemplate('#avatar-template')) {
           NAF.schemas.add({
-            template: "#avatar-template",
+            template: '#avatar-template',
             components: [
-              "position",
-              "rotation",
-              "player-info",
-              "screen-logic",
+              'position',
+              'rotation',
+              'player-info',
+              'screen-logic',
 
               {
-                selector: ".head",
-                component: "material",
-                property: "color",
-              },
-            ],
+                selector: '.head',
+                component: 'material',
+                property: 'color'
+              }
+            ]
           });
         }
         const components = NAF.schemas.getComponentsOriginal(template);
@@ -55,160 +55,151 @@
 
       window.ntExample = {
         randomColor: () => {
-          return (
-            "#" +
-            new THREE.Color(
-              Math.random(),
-              Math.random(),
-              Math.random()
-            ).getHexString()
-          );
-        },
+          return '#' + new THREE.Color(Math.random(), Math.random(), Math.random()).getHexString();
+        }
       };
 
-      AFRAME.registerComponent("player-info", {
+      AFRAME.registerComponent('player-info', {
         // notice that color and name are both listed in the schema; NAF will only keep
         // properties declared in the schema in sync.
         schema: {
           name: {
-            type: "string",
-            default: "user-" + Math.round(Math.random() * 10000),
+            type: 'string',
+            default: 'user-' + Math.round(Math.random() * 10000)
           },
           color: {
-            type: "color", // btw: color is just a string under the hood in A-Frame
-            default: window.ntExample.randomColor(),
-          },
+            type: 'color', // btw: color is just a string under the hood in A-Frame
+            default: window.ntExample.randomColor()
+          }
         },
 
         init: function () {
-          this.head = this.el.querySelector(".head");
-          this.nametag = this.el.querySelector(".nametag");
+          this.head = this.el.querySelector('.head');
+          this.nametag = this.el.querySelector('.nametag');
 
-          this.ownedByLocalUser = this.el.id === "player";
+          this.ownedByLocalUser = this.el.id === 'player';
           if (this.ownedByLocalUser) {
             // populate the html overlay with the correct name on init
-            this.nametagInput = document.getElementById("username-overlay");
+            this.nametagInput = document.getElementById('username-overlay');
             this.nametagInput.value = this.data.name;
 
             //       const myInput = document.getElementById('ourInput')
             // const form = document.getElementById('form')
 
-            const btn = document.querySelector("#form");
-            const textfield = document.querySelector("#ourInput");
-            const username = document.querySelector("#user-name");
-            const log = document.querySelector("#user-message");
-            const planeValue = document.querySelector("a-text.nametag");
+            const btn = document.querySelector('#form');
+            const textfield = document.querySelector('#ourInput');
+            const username = document.querySelector('#user-name');
+            const log = document.querySelector('#user-message');
+            const planeValue = document.querySelector('a-text.nametag');
             console.log(planeValue);
-            const sendbtn = document.getElementById("submit");
+            const sendbtn = document.getElementById('submit');
 
             function scrollChatToBottom() {
-              const chatHistory = document.querySelector(".chat-history");
+              const chatHistory = document.querySelector('.chat-history');
               chatHistory.scrollTop = chatHistory.scrollHeight + 11;
             }
 
             // HTML elements
-            const chatHistory = document.querySelector(".chat-history");
+            const chatHistory = document.querySelector('.chat-history');
 
             // NAF subscription
-            NAF.connection.subscribeToDataChannel(
-              "chat",
-              (senderId, dataType, data, targetId) => {
-                console.log("msg", data, "from", senderId);
+            NAF.connection.subscribeToDataChannel('chat', (senderId, dataType, data, targetId) => {
+              console.log('msg', data, 'from', senderId);
 
-                // Create new elements
-                const chatHistoryGrp = document.createElement("div");
-                chatHistoryGrp.className = "chat-history-grp";
+              // Create new elements
+              const chatHistoryGrp = document.createElement('div');
+              chatHistoryGrp.className = 'chat-history-grp1';
 
-                const chatHistoryUser = document.createElement("div");
-                chatHistoryUser.className = "chat-history-user1";
-                chatHistoryUser.textContent = data.username.charAt(0);
+              const chatHistoryUser = document.createElement('div');
+              chatHistoryUser.className = 'chat-history-user1';
+              chatHistoryUser.textContent = data.username.charAt(0);
 
-                const chatHistoryParent = document.createElement("div");
-                chatHistoryParent.className = "chat-history-parent1";
+              const chatHistoryParent = document.createElement('div');
+              chatHistoryParent.className = 'chat-history-parent1';
 
-                const messageDiv = document.createElement("div");
-                messageDiv.style.fontSize = "15px";
-                messageDiv.style.fontWeight = "400";
-                messageDiv.textContent = data.username;
+              const messageDiv = document.createElement('div');
+              messageDiv.style.fontSize = '15px';
+              messageDiv.style.fontWeight = '400';
+              messageDiv.textContent = data.username;
 
-                const chat1Div = document.createElement("div");
-                chat1Div.className = "chat1";
+              const chat1Div = document.createElement('div');
+              chat1Div.className = 'chat1';
 
-                const messageContentDiv = document.createElement("div");
-                messageContentDiv.textContent = data.txt;
+              const messageContentDiv = document.createElement('div');
+              messageContentDiv.textContent = data.txt;
 
-                const timeDiv = document.createElement("div");
-                timeDiv.style.width = "30px";
-                timeDiv.style.fontSize = "12px";
-                timeDiv.style.fontWeight = "lighter";
-                timeDiv.style.color = "white";
+              const timeDiv = document.createElement('div');
+              timeDiv.style.width = '30px';
+              timeDiv.style.fontSize = '12px';
+              timeDiv.style.fontWeight = 'lighter';
+              timeDiv.style.color = 'black';
 
-                const now = new Date();
-                const currentHour = now.getHours();
-                const currentMinute = now.getMinutes();
-                timeDiv.textContent = `${currentHour}:${currentMinute}`;
+              const now = new Date();
+              const currentHour = now.getHours();
+              const currentMinute = now.getMinutes();
+              timeDiv.textContent = `${currentHour}:${currentMinute}`;
 
-                // Append elements in the desired structure
-                chat1Div.appendChild(messageContentDiv);
-                chat1Div.appendChild(timeDiv);
+              // Append elements in the desired structure
+              chat1Div.appendChild(messageContentDiv);
+              chat1Div.appendChild(timeDiv);
 
-                chatHistoryParent.appendChild(messageDiv);
-                chatHistoryParent.appendChild(chat1Div);
+              chatHistoryParent.appendChild(messageDiv);
+              chatHistoryParent.appendChild(chat1Div);
 
-                chatHistoryGrp.appendChild(chatHistoryUser);
-                chatHistoryGrp.appendChild(chatHistoryParent);
+              chatHistoryGrp.appendChild(chatHistoryParent);
+              chatHistoryGrp.appendChild(chatHistoryUser);
 
-                chatHistory.appendChild(chatHistoryGrp);
+              chatHistory.insertBefore(chatHistoryGrp, chatHistory.children[0]);
+              // chatHistory.appendChild(chatHistoryGrp);
 
-                // const userNameElement = document.createElement("h5");
-                // const messageElement = document.createElement("p");
-                // userNameElement.style.textAlign = "end";
-                // userNameElement.style.color = "red";
-                // messageElement.style.textAlign = "end";
-                // const hrElement = document.createElement("hr");
+              // const userNameElement = document.createElement("h5");
+              // const messageElement = document.createElement("p");
+              // userNameElement.style.textAlign = "end";
+              // userNameElement.style.color = "red";
+              // messageElement.style.textAlign = "end";
+              // const hrElement = document.createElement("hr");
 
-                // // Set content and attributes
-                // userNameElement.textContent = data.username;
-                // messageElement.textContent = data.txt;
+              // // Set content and attributes
+              // userNameElement.textContent = data.username;
+              // messageElement.textContent = data.txt;
 
-                // // Append elements to chat-history
-                // chatHistory.appendChild(userNameElement);
-                // chatHistory.appendChild(messageElement);
-                // chatHistory.appendChild(hrElement);
+              // // Append elements to chat-history
+              // chatHistory.appendChild(userNameElement);
+              // chatHistory.appendChild(messageElement);
+              // chatHistory.appendChild(hrElement);
 
-                scrollChatToBottom();
-              }
-            );
+              scrollChatToBottom();
+            });
 
             // Event listener
-            btn.addEventListener("submit", (evt) => {
+            btn.addEventListener('submit', (evt) => {
               evt.preventDefault();
-              const chatHistoryGrp = document.createElement("div");
-              chatHistoryGrp.className = "chat-history-grp";
+              const chatHistoryGrp = document.createElement('div');
+              chatHistoryGrp.className = 'chat-history-grp';
 
-              const chatHistoryUser = document.createElement("div");
-              chatHistoryUser.className = "chat-history-user";
+              const chatHistoryUser = document.createElement('div');
+              chatHistoryUser.className = 'chat-history-user';
               chatHistoryUser.textContent = this.data.name.charAt(0);
 
-              const chatHistoryParent = document.createElement("div");
-              chatHistoryParent.className = "chat-history-parent";
+              const chatHistoryParent = document.createElement('div');
+              chatHistoryParent.className = 'chat-history-parent';
 
-              const messageDiv = document.createElement("div");
-              messageDiv.style.fontSize = "15px";
-              messageDiv.style.fontWeight = "400";
+              const messageDiv = document.createElement('div');
+              messageDiv.style.fontSize = '15px';
+              messageDiv.style.fontWeight = '400';
               messageDiv.textContent = this.data.name;
 
-              const chat1Div = document.createElement("div");
-              chat1Div.className = "chat1";
+              const chat1Div = document.createElement('div');
+              chat1Div.className = 'chat1';
 
-              const messageContentDiv = document.createElement("div");
+              const messageContentDiv = document.createElement('div');
               messageContentDiv.textContent = textfield.value;
 
-              const timeDiv = document.createElement("div");
-              timeDiv.style.width = "30px";
-              timeDiv.style.fontSize = "12px";
-              timeDiv.style.fontWeight = "lighter";
-              timeDiv.style.color = "white";
+              const timeDiv = document.createElement('div');
+              timeDiv.style.width = '30px';
+              timeDiv.style.fontSize = '12px';
+              timeDiv.style.fontWeight = 'lighter';
+              timeDiv.style.color = 'white';
 
               const now = new Date();
               const currentHour = now.getHours();
@@ -243,16 +234,16 @@
               // chatHistory.appendChild(hrElement);
 
               // Broadcast data
-              NAF.connection.broadcastData("chat", {
+              NAF.connection.broadcastData('chat', {
                 txt: textfield.value,
-                username: document.getElementById("username-overlay").value,
+                username: document.getElementById('username-overlay').value
               });
 
-              const inputElement = document.getElementById("ourInput");
-              inputElement.value = "";
+              const inputElement = document.getElementById('ourInput');
+              inputElement.value = '';
             });
 
-            sendbtn.addEventListener("click", (e) => {
+            sendbtn.addEventListener('click', (e) => {
               e.preventDefault();
 
               // // Create new elements
@@ -269,32 +260,32 @@
               // chatHistory.appendChild(userNameElement);
               // chatHistory.appendChild(messageElement);
               // chatHistory.appendChild(hrElement);
-              const chatHistoryGrp = document.createElement("div");
-              chatHistoryGrp.className = "chat-history-grp";
+              const chatHistoryGrp = document.createElement('div');
+              chatHistoryGrp.className = 'chat-history-grp';
 
-              const chatHistoryUser = document.createElement("div");
-              chatHistoryUser.className = "chat-history-user";
+              const chatHistoryUser = document.createElement('div');
+              chatHistoryUser.className = 'chat-history-user';
               chatHistoryUser.textContent = this.data.name.charAt(0);
 
-              const chatHistoryParent = document.createElement("div");
-              chatHistoryParent.className = "chat-history-parent";
+              const chatHistoryParent = document.createElement('div');
+              chatHistoryParent.className = 'chat-history-parent';
 
-              const messageDiv = document.createElement("div");
-              messageDiv.style.fontSize = "15px";
-              messageDiv.style.fontWeight = "400";
+              const messageDiv = document.createElement('div');
+              messageDiv.style.fontSize = '15px';
+              messageDiv.style.fontWeight = '400';
               messageDiv.textContent = this.data.name;
 
-              const chat1Div = document.createElement("div");
-              chat1Div.className = "chat1";
+              const chat1Div = document.createElement('div');
+              chat1Div.className = 'chat1';
 
-              const messageContentDiv = document.createElement("div");
+              const messageContentDiv = document.createElement('div');
               messageContentDiv.textContent = textfield.value;
 
-              const timeDiv = document.createElement("div");
-              timeDiv.style.width = "30px";
-              timeDiv.style.fontSize = "12px";
-              timeDiv.style.fontWeight = "lighter";
-              timeDiv.style.color = "white";
+              const timeDiv = document.createElement('div');
+              timeDiv.style.width = '30px';
+              timeDiv.style.fontSize = '12px';
+              timeDiv.style.fontWeight = 'lighter';
+              timeDiv.style.color = 'white';
 
               const now = new Date();
               const currentHour = now.getHours();
@@ -315,13 +306,13 @@
               // chatHistory.appendChild(chatHistoryGrp);
 
               // Broadcast data
-              NAF.connection.broadcastData("chat", {
+              NAF.connection.broadcastData('chat', {
                 txt: textfield.value,
-                username: document.getElementById("username-overlay").value,
+                username: document.getElementById('username-overlay').value
               });
 
-              const inputElement = document.getElementById("ourInput");
-              inputElement.value = "";
+              const inputElement = document.getElementById('ourInput');
+              inputElement.value = '';
             });
           }
         },
@@ -329,51 +320,44 @@
         // here as an example, not used in current demo. Could build a user list, expanding on this.
         listUsers: function () {
           console.log(
-            "userlist",
-            [...document.querySelectorAll("[player-info]")].map(
-              (el) => el.components["player-info"].data.name
-            )
+            'userlist',
+            [...document.querySelectorAll('[player-info]')].map((el) => el.components['player-info'].data.name)
           );
         },
 
         newRandomColor: function () {
-          this.el.setAttribute(
-            "player-info",
-            "color",
-            window.ntExample.randomColor()
-          );
+          this.el.setAttribute('player-info', 'color', window.ntExample.randomColor());
         },
 
         update: function () {
-          if (this.head)
-            this.head.setAttribute("material", "color", this.data.color);
-          if (this.nametag) this.nametag.setAttribute("value", this.data.name);
-        },
+          if (this.head) this.head.setAttribute('material', 'color', this.data.color);
+          if (this.nametag) this.nametag.setAttribute('value', this.data.name);
+        }
       });
 
-      AFRAME.registerComponent("screen-logic", {
+      AFRAME.registerComponent('screen-logic', {
         init: function () {
           const el = this.el;
 
-          var checkbox = document.getElementById("share-btn");
+          var checkbox = document.getElementById('share-btn');
           console.log(checkbox);
 
           var isChecked = false; // Variable to track checkbox state
 
-          checkbox.addEventListener("click", function () {
+          checkbox.addEventListener('click', function () {
             if (!isChecked) {
               // First click on the checkbox
               // checkbox.style.background = 'white';
               isChecked = true;
-              el.setAttribute("visible", "true");
+              el.setAttribute('visible', 'true');
             } else {
               // Second click on the checkbox
               // checkbox.style.background = 'rgba(0,0,0,0.6)';
               isChecked = false;
-              el.setAttribute("visible", "false");
+              el.setAttribute('visible', 'false');
             }
           });
-        },
+        }
       });
     </script>
     <script src="https://unpkg.com/aframe-randomizer-components@^3.0.1/dist/aframe-randomizer-components.min.js"></script>
@@ -396,115 +380,46 @@
       <div class="user_grp">
         <div class="user1" style="background-color: #6bff5f">
           <div class="username1" style="color: #6bff5f">D</div>
-          <img
-            src="./assets/img/cam1.svg"
-            width="20px"
-            class="user_image1"
-            alt=""
-          />
-          <img
-            src="./assets/img/mic1.svg"
-            width="20px"
-            class="user_image2"
-            alt=""
-          />
+          <img src="./assets/img/cam1.svg" width="20px" class="user_image1" alt="" />
+          <img src="./assets/img/mic1.svg" width="20px" class="user_image2" alt="" />
         </div>
       </div>
       <div class="user_grp">
         <div class="user1" style="background-color: #ffb21d">
           <div class="username1" style="color: #ffb21d">C</div>
-          <img
-            src="./assets/img/cam1.svg"
-            width="20px"
-            class="user_image1"
-            alt=""
-          />
-          <img
-            src="./assets/img/mic1.svg"
-            width="20px"
-            class="user_image2"
-            alt=""
-          />
+          <img src="./assets/img/cam1.svg" width="20px" class="user_image1" alt="" />
+          <img src="./assets/img/mic1.svg" width="20px" class="user_image2" alt="" />
         </div>
       </div>
       <div class="user_grp">
         <div class="user1" style="background-color: #a19487">
           <div class="username1" style="color: #a19487">A</div>
-          <img
-            src="./assets/img/cam1.svg"
-            width="20px"
-            class="user_image1"
-            alt=""
-          />
-          <img
-            src="./assets/img/mic1.svg"
-            width="20px"
-            class="user_image2"
-            alt=""
-          />
+          <img src="./assets/img/cam1.svg" width="20px" class="user_image1" alt="" />
+          <img src="./assets/img/mic1.svg" width="20px" class="user_image2" alt="" />
         </div>
       </div>
     </div>
 
     <div class="cam-group">
       <div class="cam_grp">
-        <div
-          class="cam-user1"
-          style="background-image: url(./assets/img/avatar1.svg)"
-        >
+        <div class="cam-user1" style="background-image: url(./assets/img/avatar1.svg)">
           <div class="cam-username1">Austrin</div>
-          <img
-            src="./assets/img/cam1.svg"
-            width="20px"
-            class="cam-user_image1"
-            alt=""
-          />
-          <img
-            src="./assets/img/mic1.svg"
-            width="20px"
-            class="cam-user_image2"
-            alt=""
-          />
+          <img src="./assets/img/cam1.svg" width="20px" class="cam-user_image1" alt="" />
+          <img src="./assets/img/mic1.svg" width="20px" class="cam-user_image2" alt="" />
         </div>
       </div>
       <div class="cam_grp">
-        <div
-          class="cam-user1"
-          style="background-image: url(./assets/img/avatar2.svg)"
-        >
+        <div class="cam-user1" style="background-image: url(./assets/img/avatar2.svg)">
           <div class="cam-username1">Smith M.</div>
-          <img
-            src="./assets/img/cam1.svg"
-            width="20px"
-            class="cam-user_image1"
-            alt=""
-          />
-          <img
-            src="./assets/img/mic1.svg"
-            width="20px"
-            class="cam-user_image2"
-            alt=""
-          />
+          <img src="./assets/img/cam1.svg" width="20px" class="cam-user_image1" alt="" />
+          <img src="./assets/img/mic1.svg" width="20px" class="cam-user_image2" alt="" />
         </div>
       </div>
       <div class="cam_grp">
-        <div
-          class="cam-user1"
-          style="background-image: url(./assets/img/avatar3.svg)"
-        >
+        <div class="cam-user1" style="background-image: url(./assets/img/avatar3.svg)">
           <div class="cam-username1">John Smith</div>
-          <img
-            src="./assets/img/cam1.svg"
-            width="20px"
-            class="cam-user_image1"
-            alt=""
-          />
-          <img
-            src="./assets/img/mic1.svg"
-            width="20px"
-            class="cam-user_image2"
-            alt=""
-          />
+          <img src="./assets/img/cam1.svg" width="20px" class="cam-user_image1" alt="" />
+          <img src="./assets/img/mic1.svg" width="20px" class="cam-user_image2" alt="" />
         </div>
       </div>
     </div>
@@ -515,24 +430,12 @@
 
         <div style="display: flex; align-items: center">
           <button id="" type="button" class="mini-menu">
-            <img
-              class="abcd2"
-              id="abcd2"
-              src="./assets/img/arrow-12.svg"
-              alt=""
-              width="24px"
-              height="24px"
-            />
+            <img class="abcd2" id="abcd2" src="./assets/img/arrow-12.svg" alt="" width="24px" height="24px" />
           </button>
 
           <form id="form" action="">
             <fieldset id="inp">
-              <input
-                id="ourInput"
-                type="text"
-                placeholder="Write Message"
-                autofocus
-              />
+              <input id="ourInput" type="text" placeholder="Write Message" autofocus />
               <input type="hidden" />
               <button id="submit" class="btn_message" type="submit">
                 <div style="display: flex">
@@ -570,12 +473,7 @@
 
     <div class="preloader">
       <p>Loading Experience...</p>
-      <img
-        src="./assets/videos/dropp_group_3D.gif"
-        loop="false"
-        width="500px"
-        alt=""
-      />
+      <img src="./assets/videos/dropp_group_3D.gif" loop="false" width="500px" alt="" />
     </div>
 
     <div class="intro desktop" id="top_layer">
@@ -584,12 +482,7 @@
           <div class="intro_header">
             <img src="assets/img/logo.png" alt="" class="logo" />
             <button type="button" class="intro_close_btn">
-              <img
-                src="assets/img/times.svg"
-                class=""
-                style="width: auto; height: auto"
-                alt=""
-              />
+              <img src="assets/img/times.svg" class="" style="width: auto; height: auto" alt="" />
             </button>
           </div>
           <div class="intro_content">
@@ -605,20 +498,14 @@
                   class="intro_cursor_img group-child27"
                   style="width: max-content"
                 />
-                <p class="intro_text">
-                  Click & drag screen to change camera view
-                </p>
+                <p class="intro_text">Click & drag screen to change camera view</p>
               </div>
               <img src="assets/img/wasd.svg" alt="" class="intro_wasd_img" />
               <p class="intro_text">Move</p>
             </div>
             <div>
-              <p class="intro_text">
-                Use <b>Keyboard</b> and <b>Mouse</b> to explore
-              </p>
-              <button type="button" class="continue_desktop_btn">
-                Continue
-              </button>
+              <p class="intro_text">Use <b>Keyboard</b> and <b>Mouse</b> to explore</p>
+              <button type="button" class="continue_desktop_btn">Continue</button>
             </div>
           </div>
         </section>
@@ -628,36 +515,14 @@
               <img src="assets/img/logo.png" alt="" class="logo" />
               <div style="margin: 20px">
                 <button type="button" class="continue_btn_temp signup_desktop">
-                  <div
-                    style="
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                    "
-                  >
-                    <img
-                      src="assets/img/user2.svg"
-                      class="minorusericon"
-                      width="24px"
-                      alt=""
-                    />
+                  <div style="display: flex; align-items: center; justify-content: center">
+                    <img src="assets/img/user2.svg" class="minorusericon" width="24px" alt="" />
                     Sign up
                   </div>
                 </button>
                 <button type="button" class="continue_btn_temp signin_desktop">
-                  <div
-                    style="
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                    "
-                  >
-                    <img
-                      src="assets/img/user1.svg"
-                      class=""
-                      width="24px"
-                      alt=""
-                    />
+                  <div style="display: flex; align-items: center; justify-content: center">
+                    <img src="assets/img/user1.svg" class="" width="24px" alt="" />
                     Sign in
                   </div>
                 </button>
@@ -671,41 +536,15 @@
                   placeholder="Name"
                   oninput="document.getElementById('player').setAttribute('player-info', 'name', this.value)"
                 />
-                <input
-                  type="text"
-                  class="group-child18 mail"
-                  placeholder="Email"
-                />
-                <input
-                  type="text"
-                  class="group-child18 password"
-                  placeholder="Password"
-                />
-                <input
-                  type="text"
-                  class="group-child18 confirm"
-                  placeholder="Confirm Password"
-                />
+                <input type="text" class="group-child18 mail" placeholder="Email" />
+                <input type="text" class="group-child18 password" placeholder="Password" />
+                <input type="text" class="group-child18 confirm" placeholder="Confirm Password" />
               </div>
-              <div class="display-check">
-                <input type="checkbox" class="group-child18" checked />Terms &
-                Conditions
-              </div>
+              <div class="display-check"><input type="checkbox" class="group-child18" checked />Terms & Conditions</div>
               <div>
                 <button type="button" class="continue_btn_temp_sign">
-                  <div
-                    style="
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                    "
-                  >
-                    <img
-                      src="assets/img/user2.svg"
-                      class="minorusericon"
-                      width="24px"
-                      alt=""
-                    />
+                  <div style="display: flex; align-items: center; justify-content: center">
+                    <img src="assets/img/user2.svg" class="minorusericon" width="24px" alt="" />
                     Sign up
                   </div>
                 </button>
@@ -720,70 +559,28 @@
               <img src="assets/img/logo.png" alt="" class="logo" />
               <div style="margin: 20px">
                 <button type="button" class="continue_btn_temp signup1_desktop">
-                  <div
-                    style="
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                    "
-                  >
-                    <img
-                      src="assets/img/user2.svg"
-                      class=""
-                      width="24px"
-                      alt=""
-                    />
+                  <div style="display: flex; align-items: center; justify-content: center">
+                    <img src="assets/img/user2.svg" class="" width="24px" alt="" />
                     Sign up
                   </div>
                 </button>
                 <button type="button" class="continue_btn_temp signin1_desktop">
-                  <div
-                    style="
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                    "
-                  >
-                    <img
-                      src="assets/img/user1.svg"
-                      class="minorusericon"
-                      width="24px"
-                      alt=""
-                    />
+                  <div style="display: flex; align-items: center; justify-content: center">
+                    <img src="assets/img/user1.svg" class="minorusericon" width="24px" alt="" />
                     Sign in
                   </div>
                 </button>
               </div>
               <div class="display-button" style="margin-bottom: 20px">
                 <input type="text" class="group-child18 user" placeholder=" " />
-                <input
-                  type="text"
-                  class="group-child18 password"
-                  placeholder="Password"
-                />
+                <input type="text" class="group-child18 password" placeholder="Password" />
               </div>
               <div class="display-check">
-                <input
-                  type="checkbox"
-                  class="group-child18"
-                  value="Accept Terms & Conditions"
-                  checked
-                />
+                <input type="checkbox" class="group-child18" value="Accept Terms & Conditions" checked />
               </div>
               <button type="button" class="continue_btn_temp_sign_in">
-                <div
-                  style="
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                  "
-                >
-                  <img
-                    src="assets/img/user1.svg"
-                    class="minorusericon"
-                    width="24px"
-                    alt=""
-                  />
+                <div style="display: flex; align-items: center; justify-content: center">
+                  <img src="assets/img/user1.svg" class="minorusericon" width="24px" alt="" />
                   Sign in
                 </div>
               </button>
@@ -897,49 +694,25 @@
               flex-direction: column;
               align-items: center;
               border-radius: 20px;
+              margin-top: 20px;
             "
           >
             <img src="assets/img/logo.png" alt="" class="logo" />
             <div style="margin: 20px">
               <button type="button" class="continue_btn_temp_mobile signup">
-                <div
-                  style="
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                  "
-                >
-                  <img
-                    src="assets/img/user2.svg"
-                    class="minorusericon"
-                    width="24px"
-                    alt=""
-                  />
+                <div style="display: flex; align-items: center; justify-content: center">
+                  <img src="assets/img/user2.svg" class="minorusericon" width="24px" alt="" />
                   Sign up
                 </div>
               </button>
               <button type="button" class="continue_btn_temp_mobile signin">
-                <div
-                  style="
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                  "
-                >
-                  <img
-                    src="assets/img/user1.svg"
-                    class=""
-                    width="24px"
-                    alt=""
-                  />
+                <div style="display: flex; align-items: center; justify-content: center">
+                  <img src="assets/img/user1.svg" class="" width="24px" alt="" />
                   Sign in
                 </div>
               </button>
             </div>
-            <div
-              class="display-button"
-              style="margin-bottom: 20px; width: 100%"
-            >
+            <div class="display-button" style="margin-bottom: 20px; width: 100%">
               <input
                 type="text"
                 id="username-overlay"
@@ -947,41 +720,15 @@
                 placeholder="Name"
                 oninput="document.getElementById('player').setAttribute('player-info', 'name', this.value)"
               />
-              <input
-                type="text"
-                class="group-child18 mail"
-                placeholder="Email"
-              />
-              <input
-                type="text"
-                class="group-child18 password"
-                placeholder="Password"
-              />
-              <input
-                type="text"
-                class="group-child18 confirm"
-                placeholder="Confirm Password"
-              />
+              <input type="text" class="group-child18 mail" placeholder="Email" />
+              <input type="text" class="group-child18 password" placeholder="Password" />
+              <input type="text" class="group-child18 confirm" placeholder="Confirm Password" />
             </div>
-            <div class="display-check">
-              <input type="checkbox" class="group-child18" checked />Terms &
-              Conditions
-            </div>
+            <div class="display-check"><input type="checkbox" class="group-child18" checked />Terms & Conditions</div>
             <div>
               <button type="button" class="continue_btn_temp_sign_mobile">
-                <div
-                  style="
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                  "
-                >
-                  <img
-                    src="assets/img/user2.svg"
-                    class="minorusericon"
-                    width="24px"
-                    alt=""
-                  />
+                <div style="display: flex; align-items: center; justify-content: center">
+                  <img src="assets/img/user2.svg" class="minorusericon" width="24px" alt="" />
                   Sign up
                 </div>
               </button>
@@ -997,75 +744,34 @@
               flex-direction: column;
               align-items: center;
               border-radius: 20px;
+              margin-top: 100px;
             "
           >
             <img src="assets/img/logo.png" alt="" class="logo" />
             <div style="margin: 20px">
               <button type="button" class="continue_btn_temp_mobile signup1">
-                <div
-                  style="
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                  "
-                >
-                  <img
-                    src="assets/img/user2.svg"
-                    class=""
-                    width="24px"
-                    alt=""
-                  />
+                <div style="display: flex; align-items: center; justify-content: center">
+                  <img src="assets/img/user2.svg" class="" width="24px" alt="" />
                   Sign up
                 </div>
               </button>
               <button type="button" class="continue_btn_temp_mobile signin1">
-                <div
-                  style="
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                  "
-                >
-                  <img
-                    src="assets/img/user1.svg"
-                    class="minorusericon"
-                    width="24px"
-                    alt=""
-                  />
+                <div style="display: flex; align-items: center; justify-content: center">
+                  <img src="assets/img/user1.svg" class="minorusericon" width="24px" alt="" />
                   Sign in
                 </div>
               </button>
             </div>
             <div class="display-button" style="margin-bottom: 20px">
               <input type="text" class="group-child18 user" placeholder=" " />
-              <input
-                type="text"
-                class="group-child18 password"
-                placeholder="Password"
-              />
+              <input type="text" class="group-child18 password" placeholder="Password" />
             </div>
             <div class="display-check">
-              <input
-                type="checkbox"
-                class="group-child18"
-                value=" Accept Terms & Conditions"
-                checked
-              />
+              <input type="checkbox" class="group-child18" value=" Accept Terms & Conditions" checked />
             </div>
             <button type="button" class="continue_btn_temp_sign_in_mobile">
-              <div
-                style="
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                "
-              >
-                <img
-                  src="assets/img/user1.svg"
-                  class="minorusericon"
-                  width="24px"
-                  alt=""
-                />
+              <div style="display: flex; align-items: center; justify-content: center">
+                <img src="assets/img/user1.svg" class="minorusericon" width="24px" alt="" />
                 Sign in
               </div>
             </button>
@@ -1108,18 +814,8 @@ physicallyCorrectLights : true;
         </template>
 
         <template id="avatar-template">
-          <a-entity
-            scale="3 3 3"
-            class="avatar"
-            networked-audio-source="positional:false"
-            player-info
-          >
-            <a-gltf-model
-              src="#avatarmodel"
-              rotation="0 -180 0"
-              position="0 -0.5 0"
-              scale="1.3 1.3 1.3"
-            ></a-gltf-model>
+          <a-entity scale="3 3 3" class="avatar" networked-audio-source="positional:false" player-info>
+            <a-gltf-model src="#avatarmodel" rotation="0 -180 0" position="0 -0.5 0" scale="1.3 1.3 1.3"></a-gltf-model>
             <a-text
               class="nametag"
               value="?"
@@ -1154,57 +850,22 @@ physicallyCorrectLights : true;
         <!-- Modelss -->
         <img id="black" src="./assets/videos/black.png" />
 
-        <a-asset-item
-          id="mainModel"
-          src="./assets/model/model.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="elevatorModel"
-          src="./assets/model/elevator.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="elevatorDoor1"
-          src="./assets/model/door.glb"
-        ></a-asset-item>
+        <a-asset-item id="mainModel" src="./assets/model/model.glb"></a-asset-item>
+        <a-asset-item id="elevatorModel" src="./assets/model/elevator.glb"></a-asset-item>
+        <a-asset-item id="elevatorDoor1" src="./assets/model/door.glb"></a-asset-item>
         <a-asset-item id="my-nav-lower" src=""></a-asset-item>
-        <a-asset-item
-          id="my-nav-upper"
-          src="/optional Assets/uppernav.glb"
-        ></a-asset-item>
-        <a-asset-item
-          id="avatarmodel"
-          src="./assets/model/avatar.glb"
-        ></a-asset-item>
+        <a-asset-item id="my-nav-upper" src="/optional Assets/uppernav.glb"></a-asset-item>
+        <a-asset-item id="avatarmodel" src="./assets/model/avatar.glb"></a-asset-item>
 
         <img src="./assets/videos/Group 1.png" id="flootBtn13" alt="" />
         <img src="./Group 1.png" id="ground-floor" alt="" />
 
         <!-- Videos -->
-        <video
-          autoplay
-          id="firstVideo"
-          loop
-          muted
-          playsinline
-          src="./assets/videos/LG- Phone.mp4"
-        ></video>
+        <video autoplay id="firstVideo" loop muted playsinline src="./assets/videos/LG- Phone.mp4"></video>
 
-        <video
-          src="./assets/videos/Untitled_2.mp4"
-          loop
-          muted
-          playsinline
-          id="iframe"
-        ></video>
+        <video src="./assets/videos/Untitled_2.mp4" loop muted playsinline id="iframe"></video>
 
-        <video
-          id="video"
-          class="video"
-          src="./assets/videos/intro.mp4"
-          loop
-          muted
-          playsinline
-        ></video>
+        <video id="video" class="video" src="./assets/videos/intro.mp4" loop muted playsinline></video>
 
         <video
           id="video2"
@@ -1215,15 +876,7 @@ physicallyCorrectLights : true;
           muted
           playsinline
         ></video>
-        <video
-          id="video3"
-          class="video"
-          src="./assets/videos/LG- Phone.mp4"
-          autoplay
-          loop
-          muted
-          playsinline
-        ></video>
+        <video id="video3" class="video" src="./assets/videos/LG- Phone.mp4" autoplay loop muted playsinline></video>
         <video
           id="video4"
           class="video"
@@ -1233,15 +886,7 @@ physicallyCorrectLights : true;
           muted
           playsinline
         ></video>
-        <video
-          id="video5"
-          class="video"
-          src="./assets/videos/dropp-nft.mp4"
-          autoplay
-          loop
-          muted
-          playsinline
-        ></video>
+        <video id="video5" class="video" src="./assets/videos/dropp-nft.mp4" autoplay loop muted playsinline></video>
         <video
           id="video6"
           class="video"
@@ -1260,24 +905,8 @@ physicallyCorrectLights : true;
           muted
           playsinline
         ></video>
-        <video
-          id="video8"
-          class="video"
-          src="./assets/videos/third.mp4"
-          autoplay
-          loop
-          muted
-          playsinline
-        ></video>
-        <video
-          id="video9"
-          class="video"
-          src="./assets/videos/atom_gif.mp4"
-          autoplay
-          loop
-          muted
-          playsinline
-        ></video>
+        <video id="video8" class="video" src="./assets/videos/third.mp4" autoplay loop muted playsinline></video>
+        <video id="video9" class="video" src="./assets/videos/atom_gif.mp4" autoplay loop muted playsinline></video>
       </a-assets>
 
       <!-- Camera + Controls -->
@@ -1303,48 +932,21 @@ physicallyCorrectLights : true;
 
       <!-- 3D Models -->
 
-      <a-gltf-model
-        id="myModel"
-        src="#mainModel"
-        position="0 -1 0"
-        scale="1.5 1.5 1.5"
-      ></a-gltf-model>
+      <a-gltf-model id="myModel" src="#mainModel" position="0 -1 0" scale="1.5 1.5 1.5"></a-gltf-model>
 
-      <a-gltf-model
-        id="elevator"
-        src="#elevatorModel"
-        scale="1.5 1.5 1.5"
-      ></a-gltf-model>
+      <a-gltf-model id="elevator" src="#elevatorModel" scale="1.5 1.5 1.5"></a-gltf-model>
 
-      <a-gltf-model
-        id="elevatorDoor"
-        src="#elevatorDoor1"
-        position="0 -1 0"
-        scale="1.5 1.5 1.5"
-      ></a-gltf-model>
+      <a-gltf-model id="elevatorDoor" src="#elevatorDoor1" position="0 -1 0" scale="1.5 1.5 1.5"></a-gltf-model>
 
       <!-- Nav Mesh -->
 
       <!-- Nav Mesh -->
       <!-- <a-entity gltf-model="./assets/model/navmesh (3).gltf"  nav-mesh  position="0 0.6 0"   visible="true"></a-entity> -->
-      <a-entity
-        id="myNav"
-        gltf-model="#my-nav-lower"
-        nav-mesh
-        position="0 0.6 0"
-        visible="false"
-      >
-      </a-entity>
+      <a-entity id="myNav" gltf-model="#my-nav-lower" nav-mesh position="0 0.6 0" visible="false"> </a-entity>
 
       <!-- Videos -->
       <a-entity id="vids">
-        <a-video
-          src="#video"
-          width="4.4"
-          height="2"
-          position="-3.37 1.95 9.4"
-          rotation="0 90 0"
-        ></a-video>
+        <a-video src="#video" width="4.4" height="2" position="-3.37 1.95 9.4" rotation="0 90 0"></a-video>
 
         <a-video
           src="#video3"
@@ -1459,16 +1061,12 @@ physicallyCorrectLights : true;
           <div class="value3d" id="value3d">
             <h1>DroppLabs</h1>
             <div class="text">
-              droppLabs offers unique, comprehensive, and experiential Web3
-              capabilities, providing our clients with full-scale technical,
-              marketing and operations services to develop and grow their
-              communities.
+              droppLabs offers unique, comprehensive, and experiential Web3 capabilities, providing our clients with
+              full-scale technical, marketing and operations services to develop and grow their communities.
               <br />
-              droppLabs technology also powers the Total Access NFT platform,
-              which delivers the most utility and entertainment token-based
-              asset platforms, as well as the Web3 Total Access Fellowship which
-              on boards new entrants into the Web3 ecosystem through an
-              immersive educational program.
+              droppLabs technology also powers the Total Access NFT platform, which delivers the most utility and
+              entertainment token-based asset platforms, as well as the Web3 Total Access Fellowship which on boards new
+              entrants into the Web3 ecosystem through an immersive educational program.
             </div>
             <div class="btn">Request Demo</div>
           </div>
@@ -1478,22 +1076,14 @@ physicallyCorrectLights : true;
           position="10.7521 11.28762 45.46895"
           rotation=""
           htmlembed=""
-          style="
-            display: none;
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            overflow: hidden;
-          "
+          style="display: none; position: absolute; top: 0px; left: 0px; overflow: hidden"
         >
           <div class="value3d" id="value3d">
             <h1>NFT</h1>
             <div class="text">
               <p>
-                NFTs not only present creative investment opportunities, but
-                provide real world utility options that have not been tapped
-                yet. droppLabs will bring your NFTs campaigns into the Web3
-                space.
+                NFTs not only present creative investment opportunities, but provide real world utility options that
+                have not been tapped yet. droppLabs will bring your NFTs campaigns into the Web3 space.
               </p>
             </div>
             <div class="btn">Request Demo</div>
@@ -1504,22 +1094,14 @@ physicallyCorrectLights : true;
           position="22.86283 11.28762 45.46895"
           rotation=""
           htmlembed=""
-          style="
-            display: none;
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            overflow: hidden;
-          "
+          style="display: none; position: absolute; top: 0px; left: 0px; overflow: hidden"
         >
           <div class="value3d" id="value3d">
             <h1>Shopatainment</h1>
             <div class="text">
               <p>
-                As the hallmark of droppLabs’s Web3 ecosystem, Shopatainment is
-                the engine that empowers us to create and license
-                full-functional, bespoke shoppable video environments for our
-                clients.
+                As the hallmark of droppLabs’s Web3 ecosystem, Shopatainment is the engine that empowers us to create
+                and license full-functional, bespoke shoppable video environments for our clients.
               </p>
             </div>
             <div class="btn">Request Demo</div>
@@ -1530,21 +1112,14 @@ physicallyCorrectLights : true;
           position="25.1117 11.28762 52.83197"
           rotation="0 -90 0"
           htmlembed=""
-          style="
-            display: none;
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            overflow: hidden;
-          "
+          style="display: none; position: absolute; top: 0px; left: 0px; overflow: hidden"
         >
           <div class="value3d" id="value3d">
             <h1>Alternative Realities</h1>
             <div class="text">
               <p>
-                Mixed Reality (MR), Augmented Reality (AR), and Virtual Reality
-                (VR) are enablers of deeper interactions with your audience and
-                your vehicle of interoperability for the new Web3 ecosystem
+                Mixed Reality (MR), Augmented Reality (AR), and Virtual Reality (VR) are enablers of deeper interactions
+                with your audience and your vehicle of interoperability for the new Web3 ecosystem
               </p>
             </div>
             <div class="btn">Request Demo</div>
@@ -1591,46 +1166,24 @@ physicallyCorrectLights : true;
 
       <!-- Lights -->
 
-      <a-entity
-        light="type:ambient; color: #fffffff; intensity: 0.7"
-        position="-1 15 0"
-      ></a-entity>
+      <a-entity light="type:ambient; color: #fffffff; intensity: 0.7" position="-1 15 0"></a-entity>
 
       <a-entity light="type:ambient;intensity:0.7"></a-entity>
     </a-scene>
 
     <div class="abc3" hidden>
       <button id="menu-btn" type="button" class="button menu-btn">
-        <img
-          class="abcd2"
-          id="abcd2"
-          src="./assets/img/arrow-18.svg"
-          alt=""
-          width="24px"
-          height="24px"
-        />
+        <img class="abcd2" id="abcd2" src="./assets/img/arrow-18.svg" alt="" width="24px" height="24px" />
       </button>
     </div>
     <div class="abc6 abcd6">
       <button id="collapse-btn" type="button">
-        <img
-          class="abcd67"
-          id=""
-          src="./assets/img/arrow-18.svg"
-          alt=""
-          width="24px"
-        />
+        <img class="abcd67" id="" src="./assets/img/arrow-18.svg" alt="" width="24px" />
       </button>
     </div>
     <div class="actions abc2 abcd5" id="abcd3">
       <button id="collapse-btn" type="button" class="" id="abcd2">
-        <img
-          id="abcd2"
-          class="abcd4"
-          src="./assets/img/arrow-18.svg"
-          alt=""
-          width="24px"
-        />
+        <img id="abcd2" class="abcd4" src="./assets/img/arrow-18.svg" alt="" width="24px" />
       </button>
 
       <button id="" type="button" class="button usericon tooltip">
@@ -1642,27 +1195,18 @@ physicallyCorrectLights : true;
         <span class="tooltiptext">Screenshare</span>
       </button>
       <button id="chat-btn" type="button" class="button tooltip chaticon">
-        <img
-          class="abcd7"
-          src="./assets/img/Chat_alt_3_light.svg"
-          alt=""
-          width="24px"
-        />
+        <img class="abcd7" src="./assets/img/Chat_alt_3_light.svg" class="chaticon" alt="" width="24px" />
         <span class="tooltiptext">Chat</span>
       </button>
       <button id="share-btn" type="button" class="button tooltip cameraicon">
-        <img src="./assets/img/camera-108.svg" alt="" width="24px" />
+        <img src="./assets/img/camera-108.svg" class="cameraicon1" alt="" width="24px" />
         <span class="tooltiptext">Enable Camera</span>
       </button>
       <button id="mic-btn" type="button" class="button tooltip micicon">
-        <img src="./assets/img/mic-1.svg" alt="" width="24px" />
+        <img src="./assets/img/mic-1.svg" alt="" class="micicon1" width="24px" />
         <span class="tooltiptext">Mic</span>
       </button>
-      <button
-        id="controls-btn"
-        type="button"
-        class="button tooltip settingicon"
-      >
+      <button id="controls-btn" type="button" class="button tooltip settingicon">
         <img src="./assets/img/setting-27.svg" alt="" width="24px" />
         <span class="tooltiptext">Controls</span>
       </button>
@@ -1677,15 +1221,15 @@ physicallyCorrectLights : true;
       // Mic status
       let micEnabled = true;
       // Mic button element
-      const micBtnEle = document.getElementById("mic-btn");
+      const micBtnEle = document.getElementById('mic-btn');
 
-      console.log("new update, played with versions");
+      console.log('new update, played with versions');
       // Called by Networked-Aframe when connected to server
       function onConnect() {
-        console.log("onConnect", new Date());
+        console.log('onConnect', new Date());
 
         // Handle mic button click (Mute and Unmute)
-        micBtnEle.addEventListener("click", function () {
+        micBtnEle.addEventListener('click', function () {
           NAF.connection.adapter.enableMicrophone(!micEnabled);
           micEnabled = !micEnabled;
           // micBtnEle.style.backgroundColor = micEnabled ? 'white' : 'rgba(0, 0, 0, 0.6)';
@@ -1693,9 +1237,9 @@ physicallyCorrectLights : true;
 
         let screenEnabled = false;
         // Screen share button element
-        const screenPlane = document.getElementById("screen-share");
-        const screenBtnEle = document.getElementById("screen-btn");
-        const screenshare = document.getElementById("share-btn");
+        const screenPlane = document.getElementById('screen-share');
+        const screenBtnEle = document.getElementById('screen-btn');
+        const screenshare = document.getElementById('share-btn');
 
         console.log(screenPlane);
 
@@ -1703,27 +1247,27 @@ physicallyCorrectLights : true;
         const isMobile = AFRAME.utils.device.isMobile();
 
         if (isMobile) {
-          const particles = document.getElementById("particles");
+          const particles = document.getElementById('particles');
           particles.parentNode.removeChild(particles);
         }
 
         // Called by Networked-Aframe when connected to server
 
-        console.log("onConnect", new Date());
+        console.log('onConnect', new Date());
 
         // Handle screen button click (Off and On)
 
         // screenBtnEle.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
         // screenshare.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
 
-        screenBtnEle.addEventListener("click", function () {
+        screenBtnEle.addEventListener('click', function () {
           if (screenEnabled) {
-            NAF.connection.adapter.removeLocalMediaStream("screen");
+            NAF.connection.adapter.removeLocalMediaStream('screen');
             screenEnabled = false;
-            screenBtnEle.style.backgroundColor = "rgba(0, 0, 0, 0.6)";
+            screenBtnEle.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
           } else {
             navigator.mediaDevices.getDisplayMedia().then((stream) => {
-              NAF.connection.adapter.addLocalMediaStream(stream, "screen");
+              NAF.connection.adapter.addLocalMediaStream(stream, 'screen');
               screenEnabled = true;
             });
           }
@@ -1741,30 +1285,28 @@ physicallyCorrectLights : true;
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script type="text/javascript">
       $(document).ready(function () {
-        $(".abcd6").hide();
+        $('.abcd6').hide();
         // $('.abcd7').css("background-color","white");
-        $("#abcd").click(function () {
-          $("#abcd1").slideToggle();
+        $('#abcd').click(function () {
+          $('#abcd1').slideToggle();
         });
 
-        $("#abcd2").click(function () {
-          $("#abcd3").slideToggle();
-          $(".abcd8").hide();
+        $('#abcd2').click(function () {
+          $('#abcd3').slideToggle();
+          $('.abcd8').hide();
         });
-        $(".abcd4").click(function () {
-          $(".abcd5").hide();
-          $(".abcd6").show();
+        $('.abcd4').click(function () {
+          $('.abcd5').hide();
+          $('.abcd6').show();
         });
-        $(".abcd6").click(function () {
-          $(".abcd5").show();
-          $(".abcd6").hide();
+        $('.abcd6').click(function () {
+          $('.abcd5').show();
+          $('.abcd6').hide();
         });
-        $(".chaticon").click(function () {
-          if (window.innerWidth < 768) {
-            $(".abcd8").slideToggle();
-            $(".abcd5").hide();
-            // $('.abcd7').css("background-color","green");
-          }
+        $('.chaticon').click(function () {
+          $('.abcd8').slideToggle();
+          $('.abcd5').hide();
+          // $('.abcd7').css("background-color","green");
         });
 
         // $(".usericon").click(function () {
@@ -1778,14 +1320,16 @@ physicallyCorrectLights : true;
         // });
       });
 
-      const usericon = document.querySelector(".usericon");
-      const screenicon = document.querySelector(".screenicon");
-      const chaticon = document.querySelector(".chaticon");
-      const cameraicon = document.querySelector(".cameraicon");
-      const micicon = document.querySelector(".micicon");
-      const settingicon = document.querySelector(".settingicon");
+      const usericon = document.querySelector('.usericon');
+      const screenicon = document.querySelector('.screenicon');
+      const chaticon = document.querySelector('.chaticon');
+      const cameraicon = document.querySelector('.cameraicon');
+      const micicon = document.querySelector('.micicon');
+      const cameraicon1 = document.querySelector('.cameraicon1');
+      const micicon1 = document.querySelector('.micicon1');
+      const settingicon = document.querySelector('.settingicon');
 
-      const chat_box = document.getElementById("live-chat");
+      const chat_box = document.getElementById('live-chat');
       // const user_box = document.querySelector('.user-group');
 
       console.log(chaticon, chat_box);
@@ -1796,93 +1340,96 @@ physicallyCorrectLights : true;
       var isChecked5 = false;
       var isChecked6 = false;
 
-      usericon.addEventListener("click", function () {
+      usericon.addEventListener('click', function () {
         if (!isChecked1) {
           // First click on the checkbox
-          usericon.style.background = "rgba(255,255,255,0.3)";
+          usericon.style.background = 'rgba(255,255,255,0.3)';
           isChecked1 = true;
         } else {
           // Second click on the checkbox
-          usericon.style.background = "rgba(0,0,0,0)";
+          usericon.style.background = 'rgba(0,0,0,0)';
           isChecked1 = false;
         }
       });
-      screenicon.addEventListener("click", function () {
+      screenicon.addEventListener('click', function () {
         if (!isChecked2) {
           // First click on the checkbox
-          screenicon.style.background = "rgba(255,255,255,0.3)";
+          screenicon.style.background = 'rgba(255,255,255,0.3)';
           isChecked2 = true;
         } else {
           // Second click on the checkbox
-          screenicon.style.background = "rgba(0,0,0,0)";
+          screenicon.style.background = 'rgba(0,0,0,0)';
           isChecked2 = false;
         }
       });
-      chaticon.addEventListener("click", function () {
+      chaticon.addEventListener('click', function () {
         if (!isChecked3) {
           // First click on the checkbox
-          chaticon.style.background = "rgba(255,255,255,0.3)";
+          chaticon.style.background = 'rgba(255,255,255,0.3)';
           isChecked3 = true;
         } else {
           // Second click on the checkbox
-          chaticon.style.background = "rgba(0,0,0,0)";
+          chaticon.style.background = 'rgba(0,0,0,0)';
           isChecked3 = false;
         }
       });
-      cameraicon.addEventListener("click", function () {
+      cameraicon.addEventListener('click', function () {
         if (!isChecked4) {
           // First click on the checkbox
-          cameraicon.style.background = "rgba(255,255,255,0.3)";
+          cameraicon1.src = './assets/img/camera-109.svg';
+          cameraicon.style.background = 'rgba(255,255,255,0.3)';
           isChecked4 = true;
         } else {
           // Second click on the checkbox
-          cameraicon.style.background = "rgba(0,0,0,0)";
+          cameraicon1.src = './assets/img/camera-108.svg';
+          cameraicon.style.background = 'rgba(0,0,0,0)';
           isChecked4 = false;
         }
       });
-      micicon.addEventListener("click", function () {
+      micicon.addEventListener('click', function () {
         if (!isChecked5) {
-          // First click on the checkbox
-          micicon.style.background = "rgba(255,255,255,0.3)";
+          micicon1.src = './assets/img/mic-2.svg';
+          micicon.style.background = 'rgba(255,255,255,0.3)';
           isChecked5 = true;
         } else {
           // Second click on the checkbox35px
-          micicon.style.background = "rgba(0,0,0,0)";
+          micicon1.src = './assets/img/mic-1.svg';
+          micicon.style.background = 'rgba(0,0,0,0)';
           isChecked5 = false;
         }
       });
-      settingicon.addEventListener("click", function () {
+      settingicon.addEventListener('click', function () {
         if (!isChecked6) {
           // First click on the checkbox
-          settingicon.style.background = "rgba(255,255,255,0.3)";
+          settingicon.style.background = 'rgba(255,255,255,0.3)';
           if (window.innerWidth > 768) {
-            console.log("<<<1");
-            introMobile.style.visibility = "hidden";
-            const temp1 = document.querySelector(".continue_desktop_btn");
-            temp1.style.visibility = "hidden";
-            introDesktopWrapper.classList.remove("step-3");
-            introDesktopWrapper.classList.add("step-1");
+            console.log('<<<1');
+            introMobile.style.visibility = 'hidden';
+            const temp1 = document.querySelector('.continue_desktop_btn');
+            temp1.style.visibility = 'hidden';
+            introDesktopWrapper.classList.remove('step-3');
+            introDesktopWrapper.classList.add('step-1');
             showIntro();
           } else {
-            console.log(",,,2");
-            intro.style.visibility = "hidden";
-            screenBtnEle.style.display = "none";
-            menuBtn.style.display = "none";
-            const temp2 = document.querySelector(".continue_btn");
-            temp2.style.visibility = "hidden";
-            introMobileWrapper.classList.remove("step-4");
-            introMobileWrapper.classList.add("step-1");
+            console.log(',,,2');
+            intro.style.visibility = 'hidden';
+            screenBtnEle.style.display = 'none';
+            menuBtn.style.display = 'none';
+            const temp2 = document.querySelector('.continue_btn');
+            temp2.style.visibility = 'hidden';
+            introMobileWrapper.classList.remove('step-4');
+            introMobileWrapper.classList.add('step-1');
             showIntro();
           }
           isChecked6 = true;
         } else {
           // Second click on the checkbox
-          settingicon.style.background = "rgba(0,0,0,0)";
+          settingicon.style.background = 'rgba(0,0,0,0)';
           isChecked6 = false;
-          const temp1 = document.querySelector(".continue_desktop_btn");
-          temp1.style.visibility = "show";
-          const temp2 = document.querySelector(".continue_btn");
-          temp2.style.visibility = "show";
+          const temp1 = document.querySelector('.continue_desktop_btn');
+          temp1.style.visibility = 'show';
+          const temp2 = document.querySelector('.continue_btn');
+          temp2.style.visibility = 'show';
         }
       });
     </script>
