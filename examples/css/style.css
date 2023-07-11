@@ -210,7 +210,6 @@ top: 33px !important;
 }
 .chat-history-user1 {
   right: 0;
-  color: white;
   /* position: absolute; */
   padding: 5px;
   width: 24px;
@@ -231,6 +230,7 @@ top: 33px !important;
 }
 .chat-history-parent1 {
   /* position: absolute; */
+  color: #fff;
   right: 30px;
   background-color: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(5px);
@@ -239,6 +239,7 @@ top: 33px !important;
   min-width: 50px;
   padding: 10px;
   margin-right: 30px;
+  margin-bottom: 10px;
 }
 /* .abc4 {
   position: relative;
@@ -418,9 +419,9 @@ button {
 .intro_desktop_wrapper.step-2 {
   transform: translateX(-100%);
 }
-.intro_desktop_wrapper.step-3 {
+/* .intro_desktop_wrapper.step-3 {
   transform: translateX(-200%);
-}
+} */
 .intro_desktop_section {
   width: 100%;
   flex: 100%;
@@ -582,7 +583,15 @@ button {
   opacity: 0;
   display: none;
 }
+#signindesktop {
+  opacity: 0;
+  display: none;
+}
 #signup {
+  opacity: 1;
+  display: block;
+}
+#signupdesktop {
   opacity: 1;
   display: block;
 }

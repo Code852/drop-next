@@ -42,20 +42,20 @@ if (false) {
     localStorage.setItem("intro", "true");
   }
 }
-function introResize() {
-  if (window.innerWidth > 768) {
-    introMobile.style.visibility = "hidden";
-    showIntro();
-  } else {
-    intro.style.visibility = "hidden";
-    screenBtnEle.style.display = "none";
-    controls_btn.style.display = "none";
-    menuBtn.style.display = "none";
-    hideIntro();
-  }
-}
-introResize();
-window.addEventListener("resize", introResize);
+// function introResize() {
+//   if (window.innerWidth > 768) {
+//     introMobile.style.visibility = "hidden";
+//     showIntro();
+//   } else {
+//     intro.style.visibility = "hidden";
+//     screenBtnEle.style.display = "none";
+//     controls_btn.style.display = "none";
+//     menuBtn.style.display = "none";
+//     // hideIntro();
+//   }
+// }
+// introResize();
+// window.addEventListener("resize", introResize);
 
 closeBtn.forEach((btn) => {
   btn.addEventListener("click", hideIntro);
@@ -82,28 +82,41 @@ continueDesktopBtn.addEventListener("click", function () {
 });
 
 continuesignupBtn.addEventListener("click", function () {
-  introDesktopWrapper.classList.remove("step-2");
-  introDesktopWrapper.classList.add("step-3");
+  const temp1 = document.getElementById("signindesktop");
+  temp1.style.opacity = "1";
+  temp1.style.display = "block";
+  const temp2 = document.getElementById("signupdesktop");
+  temp2.style.opacity = "0";
+  temp2.style.display = "none";
 });
 continueMobileBtn.addEventListener("click", function () {
   introMobileWrapper.classList.remove("step-1");
   introMobileWrapper.classList.add("step-2");
 });
+
 signup1_desktop.addEventListener("click", function () {
   signup_desktopBtn.style.backgroundColor = "#fff";
   signup_desktopBtn.style.color = "#202020";
   signin_desktopBtn.style.backgroundColor = "#ffffff00";
   signin_desktopBtn.style.color = "#fff";
-  introDesktopWrapper.classList.remove("step-3");
-  introDesktopWrapper.classList.add("step-2");
+  const temp1 = document.getElementById("signindesktop");
+  temp1.style.opacity = "0";
+  temp1.style.display = "none";
+  const temp2 = document.getElementById("signupdesktop");
+  temp2.style.opacity = "1";
+  temp2.style.display = "block";
 });
 signin_desktopBtn.addEventListener("click", function () {
   signin1_desktop.style.backgroundColor = "#fff";
   signin1_desktop.style.color = "#202020";
   signup1_desktop.style.backgroundColor = "#ffffff00";
   signup1_desktop.style.color = "#fff";
-  introDesktopWrapper.classList.remove("step-2");
-  introDesktopWrapper.classList.add("step-3");
+  const temp1 = document.getElementById("signindesktop");
+  temp1.style.opacity = "1";
+  temp1.style.display = "block";
+  const temp2 = document.getElementById("signupdesktop");
+  temp2.style.opacity = "0";
+  temp2.style.display = "none";
 });
 // signup1.addEventListener("click", function () {
 //   signupBtn.style.backgroundColor = "#fff";
@@ -113,6 +126,15 @@ signin_desktopBtn.addEventListener("click", function () {
 //   introMobileWrapper.classList.remove("step-5");
 //   introMobileWrapper.classList.add("step-4");
 // });
+
+continuesignupmobileBtn.addEventListener("click", function () {
+  const temp1 = document.getElementById("signin");
+  temp1.style.opacity = "1";
+  temp1.style.display = "block";
+  const temp2 = document.getElementById("signup");
+  temp2.style.opacity = "0";
+  temp2.style.display = "none";
+});
 signinBtn.addEventListener("click", function () {
   signin1.style.backgroundColor = "#fff";
   signin1.style.color = "#202020";
