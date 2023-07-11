@@ -42,19 +42,19 @@ if (false) {
     localStorage.setItem("intro", "true");
   }
 }
-// function introResize() {
-//   if (window.innerWidth > 768) {
-//     introMobile.style.visibility = "hidden";
-//     showIntro();
-//   } else {
-//     intro.style.visibility = "hidden";
-//     screenBtnEle.style.display = "none";
-//     controls_btn.style.display = "none";
-//     menuBtn.style.display = "none";
-//     // hideIntro();
-//   }
-// }
-// introResize();
+function introResize() {
+  if (window.innerWidth > 768) {
+    introMobile.style.visibility = "hidden";
+    showIntro();
+  } else {
+    intro.style.visibility = "hidden";
+    screenBtnEle.style.display = "none";
+    controls_btn.style.display = "none";
+    menuBtn.style.display = "none";
+    hideIntro();
+  }
+}
+introResize();
 // window.addEventListener("resize", introResize);
 
 closeBtn.forEach((btn) => {

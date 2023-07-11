@@ -137,12 +137,18 @@
 
                 const messageContentDiv = document.createElement("div");
                 messageContentDiv.textContent = data.txt;
+                messageContentDiv.style.width = "100%";
+                messageContentDiv.style.wordWrap = "break-word";
+                messageContentDiv.style.marginBottom = "10px";
 
                 const timeDiv = document.createElement("div");
                 timeDiv.style.width = "30px";
                 timeDiv.style.fontSize = "12px";
                 timeDiv.style.fontWeight = "lighter";
                 timeDiv.style.color = "black";
+                timeDiv.style.position = "absolute";
+                timeDiv.style.left = "5px";
+                timeDiv.style.bottom = "5px";
 
                 const now = new Date();
                 const currentHour = now.getHours();
@@ -287,12 +293,19 @@
               const messageDiv = document.createElement("div");
               messageDiv.style.fontSize = "15px";
               messageDiv.style.fontWeight = "400";
+              messageDiv.style.textAlign = "right";
+
               messageDiv.textContent = this.data.name;
 
               const chat1Div = document.createElement("div");
               chat1Div.className = "chat1";
 
               const messageContentDiv = document.createElement("div");
+              messageContentDiv.style.width = "100%";
+              messageContentDiv.style.wordWrap = "break-word";
+              messageContentDiv.style.marginBottom = "10px";
+              messageContentDiv.style.textAlign = "right";
+
               messageContentDiv.textContent = textfield.value;
 
               const timeDiv = document.createElement("div");
@@ -300,6 +313,9 @@
               timeDiv.style.fontSize = "12px";
               timeDiv.style.fontWeight = "lighter";
               timeDiv.style.color = "white";
+              timeDiv.style.position = "absolute";
+              timeDiv.style.right = "5px";
+              timeDiv.style.bottom = "5px";
 
               const now = new Date();
               const currentHour = now.getHours();
@@ -968,10 +984,7 @@
               Conditions
             </div>
             <div>
-              <button
-                type="button"
-                class="continue_btn_temp_sign_mobile"
-              >
+              <button type="button" class="continue_btn_temp_sign_mobile">
                 <div
                   style="
                     display: flex;
