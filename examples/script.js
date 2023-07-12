@@ -30,6 +30,8 @@ const signup1 = document.querySelector(".signup1");
 const signin1 = document.querySelector(".signin1");
 const signup1_desktop = document.querySelector(".signup1_desktop");
 const signin1_desktop = document.querySelector(".signin1_desktop");
+const chat_box1 = document.getElementById("live-chat");
+
 console.log(menuBtn);
 if (false) {
   hideIntro();
@@ -66,6 +68,7 @@ continuesigninBtn.addEventListener("click", function () {
   const menubar1 = document.querySelector(".abc3");
   menubar.style.opacity = "1";
   menubar1.style.opacity = "1";
+  chat_box1.style.display = "block";
   hideIntro();
 });
 continuesigninmobileBtn.addEventListener("click", function () {
@@ -82,12 +85,18 @@ continueDesktopBtn.addEventListener("click", function () {
 });
 
 continuesignupBtn.addEventListener("click", function () {
-  const temp1 = document.getElementById("signindesktop");
-  temp1.style.opacity = "1";
-  temp1.style.display = "block";
-  const temp2 = document.getElementById("signupdesktop");
-  temp2.style.opacity = "0";
-  temp2.style.display = "none";
+  const menubar = document.querySelector(".abc2");
+  const menubar1 = document.querySelector(".abc3");
+  menubar.style.opacity = "1";
+  menubar1.style.opacity = "1";
+  chat_box1.style.display = "block";
+  hideIntro();
+  // const temp1 = document.getElementById("signindesktop");
+  // temp1.style.opacity = "1";
+  // temp1.style.display = "block";
+  // const temp2 = document.getElementById("signupdesktop");
+  // temp2.style.opacity = "0";
+  // temp2.style.display = "none";
 });
 continueMobileBtn.addEventListener("click", function () {
   introMobileWrapper.classList.remove("step-1");

@@ -11,12 +11,13 @@
     </style>
     <meta name="description" content="DroppLabs-Meeting Room" />
 
-    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <!-- ******** NEW AFRAME-EXTRAS VERSION FOR A-FRAME v1.0.4 ******** -->
     <!-- <s?cript src="js/progressive-controls.js"></script> -->
     <script src="https://supereggbert.github.io/aframe-htmlembed-component/dist/build.js"></script>
     <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://recast-api.donmccurdy.com/aframe-inspector-plugin-recast.js"></script>
+    <script src="https://unpkg.com/@fern-solutions/aframe-sky-background/dist/sky-background.umd.min.js"></script>
     <!-- <script src="aframe1.js"></script> -->
     <script src="https://unpkg.com/aframe-event-set-component@^4.0.0/dist/aframe-event-set-component.min.js"></script>
     <!-- <script src="https://unpkg.com/@fern-solutions/aframe-mirror/dist/mirror.umd.min.js"></script> -->
@@ -27,7 +28,7 @@
     <link rel="stylesheet" href="css/style.css" />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.5.0/socket.io.slim.js"></script>
-    <script src="/easyrtc/easyrtc.js"></script>
+    <script src="./easyrtc-service.js"></script>
     <script src="./dist/networked-aframe.min.js"></script>
     <script>
       // see issue https://github.com/networked-aframe/networked-aframe/issues/267
@@ -114,6 +115,12 @@
             NAF.connection.subscribeToDataChannel(
               "chat",
               (senderId, dataType, data, targetId) => {
+                //               let userList = []
+
+                // userList.push(data)
+
+                // console.log(userList)
+
                 console.log("msg", data, "from", senderId);
 
                 // Create new elements
@@ -130,6 +137,8 @@
                 const messageDiv = document.createElement("div");
                 messageDiv.style.fontSize = "15px";
                 messageDiv.style.fontWeight = "400";
+                messageDiv.style.textAlign = "right";
+
                 messageDiv.textContent = data.username;
 
                 const chat1Div = document.createElement("div");
@@ -140,12 +149,13 @@
                 messageContentDiv.style.width = "100%";
                 messageContentDiv.style.wordWrap = "break-word";
                 messageContentDiv.style.marginBottom = "10px";
+                messageContentDiv.style.textAlign = "right";
 
                 const timeDiv = document.createElement("div");
                 timeDiv.style.width = "30px";
                 timeDiv.style.fontSize = "12px";
                 timeDiv.style.fontWeight = "lighter";
-                timeDiv.style.color = "black";
+                timeDiv.style.color = "#afaaaa";
                 timeDiv.style.position = "absolute";
                 timeDiv.style.left = "5px";
                 timeDiv.style.bottom = "5px";
@@ -194,6 +204,7 @@
             // Event listener
             btn.addEventListener("submit", (evt) => {
               evt.preventDefault();
+
               const chatHistoryGrp = document.createElement("div");
               chatHistoryGrp.className = "chat-history-grp";
 
@@ -293,8 +304,6 @@
               const messageDiv = document.createElement("div");
               messageDiv.style.fontSize = "15px";
               messageDiv.style.fontWeight = "400";
-              messageDiv.style.textAlign = "right";
-
               messageDiv.textContent = this.data.name;
 
               const chat1Div = document.createElement("div");
@@ -304,7 +313,6 @@
               messageContentDiv.style.width = "100%";
               messageContentDiv.style.wordWrap = "break-word";
               messageContentDiv.style.marginBottom = "10px";
-              messageContentDiv.style.textAlign = "right";
 
               messageContentDiv.textContent = textfield.value;
 
@@ -312,7 +320,7 @@
               timeDiv.style.width = "30px";
               timeDiv.style.fontSize = "12px";
               timeDiv.style.fontWeight = "lighter";
-              timeDiv.style.color = "white";
+              timeDiv.style.color = "#5c5c5c";
               timeDiv.style.position = "absolute";
               timeDiv.style.right = "5px";
               timeDiv.style.bottom = "5px";
@@ -399,7 +407,7 @@
     </script>
     <script src="https://unpkg.com/aframe-randomizer-components@^3.0.1/dist/aframe-randomizer-components.min.js"></script>
     <script src="https://unpkg.com/aframe-environment-component@1.3.2/dist/aframe-environment-component.min.js"></script>
-    <script src="/js/spawn-in-circle.component.js"></script>
+    <!-- <script src="/js/spawn-in-circle.component.js"></script> -->
     <link rel="stylesheet" type="text/css" href="/css/style.css" />
   </head>
   <body>
@@ -535,7 +543,7 @@
         <div class="chat-history"></div>
 
         <div style="display: flex; align-items: center">
-          <button id="" type="button" class="mini-menu">
+          <button id="abcd9" type="button" class="mini-menu">
             <img
               class="abcd2"
               id="abcd2"
@@ -770,7 +778,12 @@
                 </button>
               </div>
               <div class="display-button" style="margin-bottom: 20px">
-                <input type="text" class="group-child18 user" placeholder=" " />
+                <input
+                  type="text"
+                  class="group-child18 user"
+                  placeholder=" "
+                  oninput="document.getElementById('player').setAttribute('player-info', 'name', this.value)"
+                />
                 <input
                   type="text"
                   class="group-child18 password"
@@ -1101,6 +1114,7 @@
     debug: true;
     adapter: easyrtc;
     audio: true;
+    video : true
   
   "
       loading-screen="dotsColor: red; backgroundColor: black"
@@ -1157,6 +1171,19 @@ physicallyCorrectLights : true;
               networked-video-source="streamName: screen"
               visible="false"
             ></a-plane>
+
+            <a-plane
+              id="camshare"
+              color="#FFF"
+              width="0.25"
+              height="0.125"
+              position="-0.2 0 -0.001"
+              material="side: front; color:#FFF; shader: flat"
+              rotation="0 -180 0"
+              networked-video-source
+              visible="true"
+            >
+            </a-plane>
           </a-entity>
         </template>
 
@@ -1467,6 +1494,10 @@ physicallyCorrectLights : true;
         ></a-image>
       </a-entity>
 
+      <a-sky-background
+        top-color="#0077ff"
+        bottom-color="#ffffff"
+      ></a-sky-background>
       <!-- Video End -->
 
       <a-entity id="allTexts">
@@ -1618,14 +1649,14 @@ physicallyCorrectLights : true;
 
     <div class="abc3" hidden>
       <button id="menu-btn" type="button" class="button menu-btn">
-        <img
+        <!-- <img
           class="abcd2"
           id="abcd2"
           src="./assets/img/arrow-18.svg"
           alt=""
           width="24px"
           height="24px"
-        />
+        /> -->
       </button>
     </div>
     <div class="abc6 abcd6">
@@ -1642,14 +1673,12 @@ physicallyCorrectLights : true;
     <div class="actions abc2 abcd5" id="abcd3">
       <button id="collapse-btn" type="button" class="" id="abcd2">
         <img
-          id="abcd2"
           class="abcd4"
           src="./assets/img/arrow-18.svg"
           alt=""
           width="24px"
         />
       </button>
-
       <button id="" type="button" class="button usericon tooltip">
         <img src="./assets/img/users-alt.svg" alt="" width="24px" />
         <span class="tooltiptext">Users</span>
@@ -1670,7 +1699,7 @@ physicallyCorrectLights : true;
       </button>
       <button id="share-btn" type="button" class="button tooltip cameraicon">
         <img
-          src="./assets/img/camera-108.svg"
+          src="./assets/img/camera-109.svg"
           class="cameraicon1"
           alt=""
           width="24px"
@@ -1679,7 +1708,7 @@ physicallyCorrectLights : true;
       </button>
       <button id="mic-btn" type="button" class="button tooltip micicon">
         <img
-          src="./assets/img/mic-1.svg"
+          src="./assets/img/mic-2.svg"
           alt=""
           class="micicon1"
           width="24px"
@@ -1724,6 +1753,16 @@ physicallyCorrectLights : true;
         const screenPlane = document.getElementById("screen-share");
         const screenBtnEle = document.getElementById("screen-btn");
         const screenshare = document.getElementById("share-btn");
+
+        let cameraEnabled = true;
+        // Camera button element
+        // const screenshare = document.querySelector('.cam-share');
+
+        screenshare.addEventListener("click", function () {
+          NAF.connection.adapter.enableCamera(!cameraEnabled);
+          cameraEnabled = !cameraEnabled;
+          // cameraBtnEle.textContent = cameraEnabled ? 'Hide Camera' : 'Show Camera';
+        });
 
         console.log(screenPlane);
 
@@ -1776,7 +1815,8 @@ physicallyCorrectLights : true;
         });
 
         $("#abcd2").click(function () {
-          $("#abcd3").slideToggle();
+          // $("#abcd3").slideToggle();
+          $("#abcd3").show();
           $(".abcd8").hide();
         });
         $(".abcd4").click(function () {
@@ -1862,24 +1902,24 @@ physicallyCorrectLights : true;
       cameraicon.addEventListener("click", function () {
         if (!isChecked4) {
           // First click on the checkbox
-          cameraicon1.src = "./assets/img/camera-109.svg";
+          cameraicon1.src = "./assets/img/camera-108.svg";
           cameraicon.style.background = "rgba(255,255,255,0.3)";
           isChecked4 = true;
         } else {
           // Second click on the checkbox
-          cameraicon1.src = "./assets/img/camera-108.svg";
+          cameraicon1.src = "./assets/img/camera-109.svg";
           cameraicon.style.background = "rgba(0,0,0,0)";
           isChecked4 = false;
         }
       });
       micicon.addEventListener("click", function () {
         if (!isChecked5) {
-          micicon1.src = "./assets/img/mic-2.svg";
+          micicon1.src = "./assets/img/mic-1.svg";
           micicon.style.background = "rgba(255,255,255,0.3)";
           isChecked5 = true;
         } else {
           // Second click on the checkbox35px
-          micicon1.src = "./assets/img/mic-1.svg";
+          micicon1.src = "./assets/img/mic-2.svg";
           micicon.style.background = "rgba(0,0,0,0)";
           isChecked5 = false;
         }
