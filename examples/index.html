@@ -1067,7 +1067,12 @@
               </button>
             </div>
             <div class="display-button" style="margin-bottom: 20px">
-              <input type="text" class="group-child18 user" placeholder=" " />
+              <input
+                type="text"
+                class="group-child18 user"
+                placeholder=" "
+                oninput="document.getElementById('player').setAttribute('player-info', 'name', this.value)"
+              />
               <input
                 type="text"
                 class="group-child18 password"

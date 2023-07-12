@@ -137,12 +137,15 @@ signin_desktopBtn.addEventListener("click", function () {
 // });
 
 continuesignupmobileBtn.addEventListener("click", function () {
-  const temp1 = document.getElementById("signin");
-  temp1.style.opacity = "1";
-  temp1.style.display = "block";
-  const temp2 = document.getElementById("signup");
-  temp2.style.opacity = "0";
-  temp2.style.display = "none";
+  const menubar = document.querySelector(".abc2");
+  menubar.style.opacity = "1";
+  hideIntro();
+  // const temp1 = document.getElementById("signin");
+  // temp1.style.opacity = "1";
+  // temp1.style.display = "block";
+  // const temp2 = document.getElementById("signup");
+  // temp2.style.opacity = "0";
+  // temp2.style.display = "none";
 });
 signinBtn.addEventListener("click", function () {
   signin1.style.backgroundColor = "#fff";
