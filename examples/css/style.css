@@ -1,4 +1,4 @@
-@import '//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css';
+@import "//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css";
 
 @media (min-width: 320px) and (max-width: 400px) {
   /* .abc1 {
@@ -234,7 +234,7 @@ top: 33px !important;
   border-bottom-left-radius: 0;
 }
 .chat-history-parent::before {
-  content: '';
+  content: "";
   width: 20px;
   height: 20px;
   display: block;
@@ -273,7 +273,7 @@ top: 33px !important;
   border-bottom-right-radius: 0;
 }
 .chat-history-parent1::after {
-  content: '';
+  content: "";
   width: 20px;
   height: 20px;
   display: block;
@@ -392,7 +392,7 @@ button #color-changer {
   width: max-content;
 }
 body {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 button {
   border: none;
@@ -822,7 +822,7 @@ button {
   border-radius: 20px;
   width: 400px;
   /* opacity: 0; */
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   /* transition: all ease 0.4s; */
   /* display: none; */
   text-align: center;
@@ -849,7 +849,7 @@ button {
 .display-name h3 {
   font-size: 30px;
   color: aliceblue;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   margin-top: 15px;
 }
 
@@ -884,7 +884,7 @@ button {
   border-radius: 30px;
 }
 
-.actions input[type='checkbox'] {
+.actions input[type="checkbox"] {
   margin-right: 5px;
   appearance: none;
   width: 20px;
@@ -896,12 +896,12 @@ button {
   position: relative;
 }
 
-.actions input[type='checkbox']:checked {
+.actions input[type="checkbox"]:checked {
   background-color: #555;
 }
 
-.actions input[type='checkbox']::before {
-  content: '';
+.actions input[type="checkbox"]::before {
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -914,11 +914,11 @@ button {
   transition: opacity 0.3s;
 }
 
-.actions input[type='checkbox']:checked::before {
+.actions input[type="checkbox"]:checked::before {
   opacity: 1;
 }
 
-.actions label:hover input[type='checkbox'] {
+.actions label:hover input[type="checkbox"] {
   border-color: #333;
 }
 
@@ -1013,7 +1013,7 @@ p {
 } /* For IE 6/7 */
 .clearfix:before,
 .clearfix:after {
-  content: '';
+  content: "";
   display: table;
 }
 .clearfix:after {
@@ -1134,7 +1134,7 @@ input {
 #live-chat h4:before {
   background: #1a8a34;
   border-radius: 50%;
-  content: '';
+  content: "";
   display: inline-block;
   height: 8px;
   margin: 0 8px 0 0;
@@ -1155,7 +1155,7 @@ input {
 input {
   padding-left: 20px;
 }
-#live-chat input[type='text'] {
+#live-chat input[type="text"] {
   /* border: 1px solid #ccc; */
   border-radius: 20px;
   padding: 8px;
@@ -1338,7 +1338,7 @@ input {
 }
 
 .user::-webkit-input-placeholder {
-  background-image: url('../assets/img/user.svg');
+  background-image: url("../assets/img/user.svg");
   background-repeat: no-repeat;
   background-position: 0px 10px;
   font-weight: normal;
@@ -1348,7 +1348,7 @@ input {
   color: rgb(255, 255, 255, 0.6);
 }
 .mail::-webkit-input-placeholder {
-  background-image: url('../assets/img/mail.svg');
+  background-image: url("../assets/img/mail.svg");
   background-repeat: no-repeat;
   background-position: 0px 10px;
   font-weight: normal;
@@ -1358,7 +1358,7 @@ input {
   color: rgb(255, 255, 255, 0.6);
 }
 .password::-webkit-input-placeholder {
-  background-image: url('../assets/img/password.svg');
+  background-image: url("../assets/img/password.svg");
   background-repeat: no-repeat;
   background-position: 0px 10px;
   font-weight: normal;
@@ -1368,7 +1368,7 @@ input {
   color: rgb(255, 255, 255, 0.6);
 }
 .confirm::-webkit-input-placeholder {
-  background-image: url('../assets/img/confirm.svg');
+  background-image: url("../assets/img/confirm.svg");
   background-repeat: no-repeat;
   background-position: 2px 10px;
   font-weight: normal;
@@ -1410,7 +1410,7 @@ input {
 }
 
 .tooltip .tooltiptext::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 100%;
   left: 50%;
